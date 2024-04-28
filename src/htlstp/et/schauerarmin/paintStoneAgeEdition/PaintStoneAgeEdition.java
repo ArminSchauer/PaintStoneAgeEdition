@@ -7,23 +7,18 @@ import java.util.Vector;
 public class PaintStoneAgeEdition extends PaintFrame {
 
     private double zoom;
-    public static int frameWidth;
-    public static int frameHeight;
     private int startX; // X offset of the left side
     private int startY; // Y offset of the title bar
     private Point startPoint;
     private Color lineColor;
     private Color fillColor;
     private DrawMode drawMode;
-    private DrawableLine previewLine;
-    private DrawableOval previewOval;
-    private DrawableRectangle previewRectangle;
-    private Vector<DrawableLine> lines;
-    private Vector<DrawableOval> ovals;
-    private Vector<DrawableRectangle> rectangles;
+    private DrawableTypes previewShape;
+    private Vector<DrawableTypes> shapesToDraw;
+    private final DrawableUI paintUI;
 
     public PaintStoneAgeEdition() {
-        super("Paint: Stone Age Edition [v1.0-Alpha]", 800, 600);
+        super("Paint: Stone Age Edition [v1.1-Alpha] - Untitled.paint", 800, 600);
         MenuBar mb = new MenuBar();
         Menu fileMenu = new Menu("File");
         Menu editMenu = new Menu("Edit");
@@ -91,17 +86,15 @@ public class PaintStoneAgeEdition extends PaintFrame {
         mb.add(viewMenu);
         this.setMenuBar(mb);
 
-        zoom = 1.0d;
-        frameWidth = this.getWidth() - this.getInsets().right;
-        frameHeight = this.getHeight() - this.getInsets().bottom;
+        zoom = 1d;
+        DrawableUI.frameWidth = this.getWidth() - this.getInsets().right;
+        DrawableUI.frameHeight = this.getHeight() - this.getInsets().bottom;
         startX = this.getInsets().left;
         startY = this.getInsets().top;
         drawMode = DrawMode.DEFAULT;
-        lines = new Vector<>();
-        ovals = new Vector<>();
-        rectangles = new Vector<>();
+        shapesToDraw = new Vector<>();
         lineColor = Color.BLACK;
-        fillColor = null;
+        paintUI = new DrawableUI(lineColor, fillColor);
 
         this.setVisible(true);
     }
@@ -110,19 +103,19 @@ public class PaintStoneAgeEdition extends PaintFrame {
 
     @Override
     public void paint(Graphics g) {
-        for(int i = 0; i < lines.size(); i++) {lines.get(i).draw(g, zoom, startX, startY);}
-        for(int i = 0; i < ovals.size(); i++) {ovals.get(i).draw(g, zoom, startX, startY);}
-        for(int i = 0; i < rectangles.size(); i++) {rectangles.get(i).draw(g, zoom, startX, startY);}
-        if(drawMode == DrawMode.DRAW_LINE) {previewLine.draw(g, zoom, startX, startY);}
-        if(drawMode == DrawMode.DRAW_OVAL) {previewOval.draw(g, zoom, startX, startY);}
-        if(drawMode == DrawMode.DRAW_RECTANGLE) {previewRectangle.draw(g, zoom, startX, startY);}
-        new DrawableUI().draw(g, zoom, startX, startY);
+        for(int i = 0; i < shapesToDraw.size(); i++) {shapesToDraw.get(i).draw(g, zoom, startX, startY);}
+        if(drawMode == DrawMode.DRAW_LINE ||
+                drawMode == DrawMode.DRAW_OVAL ||
+                drawMode == DrawMode.DRAW_RECTANGLE) {previewShape.draw(g, zoom, startX, startY);}
+        paintUI.setFgColor(lineColor);
+        paintUI.setBgColor(fillColor);
+        paintUI.draw(g, zoom, startX, startY);
     }
 
     @Override
     public void componentResized(ComponentEvent e) {
-        frameWidth = this.getWidth() - this.getInsets().right;
-        frameHeight = this.getHeight() - this.getInsets().bottom;
+        DrawableUI.frameWidth = this.getWidth() - this.getInsets().right;
+        DrawableUI.frameHeight = this.getHeight() - this.getInsets().bottom;
         startX = this.getInsets().left;
         startY = this.getInsets().top;
         repaint();
@@ -158,44 +151,55 @@ public class PaintStoneAgeEdition extends PaintFrame {
             case 'C':
                 fillColor = Color.CYAN;
                 break;
+            case 'N':
+                fillColor = null;
+                break;
         }
+        repaint();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         if(e.getButton() == MouseEvent.BUTTON1) {
+            for(int i = 0; i < paintUI.uiColorBox.size(); i++) {
+                if(paintUI.uiColorBox.get(i).clickedAtBox(e.getPoint()) &&
+                        paintUI.uiColorBox.get(i).getColorType() == 2) {
+                    paintUI.setFgColor(paintUI.uiColorBox.get(i).getFillColor());
+                    System.out.println("abc");
+                }
+            }
             switch(drawMode) {
                 case DRAW_TYPE_LINE:
-                    startPoint = new Point((int)(e.getPoint().x / zoom) - startX,
-                            (int)(e.getPoint().y / zoom) - startY);
+                    startPoint = new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom));
                     drawMode = DrawMode.DRAW_LINE;
                     break;
                 case DRAW_LINE:
-                    lines.add(new DrawableLine(startPoint,
-                            new Point((int)(e.getPoint().x / zoom) - startX,
-                                    (int)(e.getPoint().y / zoom) - startY), lineColor));
+                    shapesToDraw.add(new DrawableLine(startPoint,
+                            new Point((int)((e.getPoint().x - startX)/ zoom),
+                                    (int)((e.getPoint().y -startY) / zoom)), lineColor));
                     drawMode = DrawMode.DRAW_TYPE_LINE;
                     break;
                 case DRAW_TYPE_OVAL:
-                    startPoint = new Point((int)(e.getPoint().x / zoom) - startX,
-                            (int)(e.getPoint().y / zoom) - startY);
+                    startPoint = new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom));
                     drawMode = DrawMode.DRAW_OVAL;
                     break;
                 case DRAW_OVAL:
-                    ovals.add(new DrawableOval(startPoint,
-                            new Point((int)(e.getPoint().x / zoom) - startX
-                                    , (int)(e.getPoint().y / zoom) - startY), lineColor, fillColor));
+                    shapesToDraw.add(new DrawableOval(startPoint,
+                            new Point((int)((e.getPoint().x - startX)/ zoom),
+                                    (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor));
                     drawMode = DrawMode.DRAW_TYPE_OVAL;
                     break;
                 case DRAW_TYPE_RECTANGLE:
-                    startPoint = new Point((int)(e.getPoint().x / zoom) - startX,
-                            (int)(e.getPoint().y / zoom) - startY);
+                    startPoint = new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom));
                     drawMode = DrawMode.DRAW_RECTANGLE;
                     break;
                 case DRAW_RECTANGLE:
-                    rectangles.add(new DrawableRectangle(startPoint,
-                            new Point((int)(e.getPoint().x / zoom) - startX,
-                                    (int)(e.getPoint().y / zoom) - startY), lineColor, fillColor));
+                    shapesToDraw.add(new DrawableRectangle(startPoint,
+                            new Point((int)((e.getPoint().x - startX)/ zoom),
+                                    (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor));
                     drawMode = DrawMode.DRAW_TYPE_RECTANGLE;
                     break;
                 default:
@@ -208,21 +212,21 @@ public class PaintStoneAgeEdition extends PaintFrame {
     public void mouseMoved(MouseEvent e) {
         switch(drawMode) {
             case DRAW_LINE:
-                previewLine = new DrawableLine(startPoint,
-                        new Point((int)(e.getPoint().x / zoom) - startX,
-                                (int)(e.getPoint().y / zoom) - startY), lineColor);
+                previewShape = new DrawableLine(startPoint,
+                        new Point((int)((e.getPoint().x - startX)/ zoom),
+                                (int)((e.getPoint().y -startY) / zoom)), lineColor);
                 repaint();
                 break;
             case DRAW_OVAL:
-                previewOval = new DrawableOval(startPoint,
-                        new Point((int)(e.getPoint().x / zoom) - startX,
-                                (int)(e.getPoint().y / zoom) - startY), lineColor, fillColor);
+                previewShape = new DrawableOval(startPoint,
+                        new Point((int)((e.getPoint().x - startX)/ zoom),
+                                (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor);
                 repaint();
                 break;
             case DRAW_RECTANGLE:
-                previewRectangle = new DrawableRectangle(startPoint,
-                        new Point((int)(e.getPoint().x / zoom) - startX,
-                                (int)(e.getPoint().y / zoom) - startY), lineColor, fillColor);
+                previewShape = new DrawableRectangle(startPoint,
+                        new Point((int)((e.getPoint().x - startX)/ zoom),
+                                (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor);
                 repaint();
                 break;
             default:
@@ -234,7 +238,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
     public void mouseWheelMoved(MouseWheelEvent e) {
         zoom += e.getPreciseWheelRotation() * 0.25;
         if(zoom >= 10d) {zoom = 10d;}
-        if(zoom <= 0.1d) {zoom = 0.1d;}
+        if(zoom <= 0.1) {zoom = 0.1d;}
         repaint();
     }
 
@@ -242,9 +246,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()) {
             case "NEW_FILE":
-                lines = new Vector<>();
-                ovals = new Vector<>();
-                rectangles = new Vector<>();
+                shapesToDraw = new Vector<>();
                 drawMode = DrawMode.DEFAULT;
                 break;
             case "EXIT":
@@ -258,7 +260,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 if(zoom <= 0.1d) {zoom = 0.1d;}
                 break;
             case "ZOOM_RESET":
-                zoom = 1.0d;
+                zoom = 1d;
                 break;
         }
         repaint();

@@ -4,6 +4,7 @@ import java.awt.*;
 
 public abstract class DrawableTypes implements Drawable {
 
+    public static final byte TYPE_UI_COMPONENT = 0;
     public static final byte TYPE_LINE = 1;
     public static final byte TYPE_RECTANGLE = 2;
     public static final byte TYPE_OVAL = 3;
@@ -13,6 +14,7 @@ public abstract class DrawableTypes implements Drawable {
     private final byte type;
     private Color lineColor;
     private Color fillColor;
+    private int thickness;
 
     public DrawableTypes(Point pointA, Point pointB, byte type, Color lineColor, Color fillColor) {
         this.pointA = pointA;
@@ -20,6 +22,7 @@ public abstract class DrawableTypes implements Drawable {
         this.type = type;
         this.lineColor = lineColor;
         this.fillColor = fillColor;
+        this.thickness = DrawableUI.thickness;
     }
 
     public Point getPointA() {
@@ -54,4 +57,10 @@ public abstract class DrawableTypes implements Drawable {
         this.fillColor = fillColor;
     }
 
+    public int getThickness() {
+        return this.thickness;
+    }
+    public void setThickness(int thickness) {
+        this.thickness = thickness;
+    }
 }
