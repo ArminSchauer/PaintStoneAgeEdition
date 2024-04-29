@@ -1,0 +1,66 @@
+package htlstp.et.schauerarmin.paintStoneAgeEdition;
+
+import java.awt.*;
+
+public class DrawableUIOptionBox extends DrawableTypes {
+
+    private final int boxWidth;
+    private final int boxHeight;
+    private final int boxType;
+
+    public static final int BOX_TYPE_SHAPE = 2;
+    public static final int BOX_TYPE_THICKNESS = 3;
+    public static final int BOX_TYPE_COLOR_CURRENT_FG = 4;
+    public static final int BOX_TYPE_COLOR_CURRENT_BG = 5;
+    public static final int BOX_TYPE_COLORs_FG = 6;
+    public static final int BOX_TYPE_COLORs_BG = 7;
+    public static final int BOX_TYPE_BUTTONs = 8;
+
+
+    public DrawableUIOptionBox(Point pointA, Point pointB, Color lineColor, Color fillColor, int width, int height, int boxType) {
+        super(pointA, pointB, DrawableTypes.TYPE_UI_COMPONENT,lineColor, fillColor, 0);
+        this.boxWidth = width;
+        this.boxHeight = height;
+        this.boxType = boxType;
+    }
+
+    @Override
+    public void draw(Graphics g, double zoom, int startX, int startY) {
+        if(this.getFillColor() != null) {
+            g.setColor(this.getFillColor());
+            g.fillRect(this.getPointA().x, this.getPointA().y + startY, boxWidth, boxHeight);
+        } else {drawColorTransparent(g, this.getPointA().x, this.getPointA().y + startY, boxWidth, boxHeight);}
+        g.setColor(this.getLineColor());
+        g.drawRect(this.getPointA().x, this.getPointA().y + startY, boxWidth, boxHeight);
+    }
+
+    private static void drawColorTransparent(Graphics g, int x, int y, int width, int height) {
+        int sizeX = 8;
+        int sizeY = 8;
+        int lines = 0;
+        int inset = 0;
+        g.setColor(Color.WHITE);
+        g.fillRect(x, y, width, height);
+        g.setColor(new Color(220, 220, 220));
+        for(int i = y; i < height + y; i += sizeY) {
+            if(lines % 2 == 0) {inset = sizeX;}
+            if(height+y - i < sizeY) {sizeY = height+y-i;}
+            for(int j = x + inset; j < width + x - inset; j+= sizeX*2) {
+                if(width+x - j < sizeX) {sizeX = width+x-j;}
+                g.fillRect(j, i, sizeX, sizeY);
+                inset = 0;
+            }
+            sizeX = 8;
+            lines++;
+        }
+    }
+
+    public boolean clickedAtBox(Point mousePoint) {
+        return (this.getPointA().x <= mousePoint.x) && (this.getPointB().x >= mousePoint.x) && (this.getPointA().y <= mousePoint.y) && (this.getPointB().y >= mousePoint.y);
+    }
+
+    public int getBoxType() {
+        return this.boxType;
+    }
+
+}

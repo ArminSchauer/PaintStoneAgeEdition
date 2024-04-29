@@ -16,13 +16,13 @@ public abstract class DrawableTypes implements Drawable {
     private Color fillColor;
     private int thickness;
 
-    public DrawableTypes(Point pointA, Point pointB, byte type, Color lineColor, Color fillColor) {
+    public DrawableTypes(Point pointA, Point pointB, byte type, Color lineColor, Color fillColor, int thickness) {
         this.pointA = pointA;
         this.pointB = pointB;
         this.type = type;
         this.lineColor = lineColor;
         this.fillColor = fillColor;
-        this.thickness = DrawableUI.thickness;
+        this.thickness = thickness;
     }
 
     public Point getPointA() {

@@ -4,11 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="16742e2a-3065-4d73-8fd4-69c40a49c9da" name="Changes" comment="README">
-      <change afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUIColorBox.java" afterDir="false" />
+    <list default="true" id="16742e2a-3065-4d73-8fd4-69c40a49c9da" name="Changes" comment="Paint: Stone Age Edition [v1.1-Alpha]">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableLine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableLine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableOval.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableOval.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRectangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRectangle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableTypes.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUIColorBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUIOptionBox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintStoneAgeEdition.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintStoneAgeEdition.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -28,6 +32,9 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
@@ -95,7 +102,10 @@
       <workItem from="1714041869990" duration="699000" />
       <workItem from="1714115466299" duration="315000" />
       <workItem from="1714115797733" duration="7281000" />
-      <workItem from="1714304904082" duration="21347000" />
+      <workItem from="1714304904082" duration="22151000" />
+      <workItem from="1714372814791" duration="75000" />
+      <workItem from="1714376823703" duration="14522000" />
+      <workItem from="1714428958697" duration="2954000" />
     </task>
     <task id="LOCAL-00001" summary="Paint: Stone Age Edition [v1.0-Alpha]">
       <option name="closed" value="true" />
@@ -113,7 +123,15 @@
       <option name="project" value="LOCAL" />
       <updated>1713998223559</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Paint: Stone Age Edition [v1.1-Alpha]">
+      <option name="closed" value="true" />
+      <created>1714335233681</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1714335233681</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -123,6 +141,7 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="Paint: Stone Age Edition [v1.0-Alpha]" />
     <MESSAGE value="README" />
-    <option name="LAST_COMMIT_MESSAGE" value="README" />
+    <MESSAGE value="Paint: Stone Age Edition [v1.1-Alpha]" />
+    <option name="LAST_COMMIT_MESSAGE" value="Paint: Stone Age Edition [v1.1-Alpha]" />
   </component>
 </project>
