@@ -3,7 +3,10 @@ package htlstp.et.schauerarmin.paintStoneAgeEdition;
 import java.awt.*;
 import java.awt.event.*;
 
-public abstract class PaintFrame extends Frame implements WindowListener, ComponentListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, ActionListener {
+public abstract class PaintFrame
+        extends Frame
+        implements WindowListener, ComponentListener, KeyListener, MouseListener,
+        MouseMotionListener, MouseWheelListener, ActionListener {
 
     public PaintFrame(String title, int width, int height) {
         this.setTitle(title);
@@ -40,8 +43,6 @@ public abstract class PaintFrame extends Frame implements WindowListener, Compon
     public void windowDeactivated(WindowEvent e) {}
     @Override
     public void keyTyped(KeyEvent e) {}
-    @Override
-    public void keyReleased(KeyEvent e) {}
     @Override
     public void mouseClicked(MouseEvent e) {}
     @Override

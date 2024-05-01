@@ -1,7 +1,10 @@
 package htlstp.et.schauerarmin.paintStoneAgeEdition;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
 
 public class PaintStoneAgeEdition extends PaintFrame {
@@ -12,15 +15,17 @@ public class PaintStoneAgeEdition extends PaintFrame {
     private Point startPoint;
     private Color lineColor;
     private Color fillColor;
+    private boolean isSquare;
     public static int thickness;
     public static int uiSideMenuSize;
     private DrawMode drawMode;
     private DrawableTypes previewShape;
     private Vector<DrawableTypes> shapesToDraw;
+    private Vector<Character> inputTxt;
     private final DrawableUI paintUI;
 
     public PaintStoneAgeEdition() {
-        super("Paint: Stone Age Edition [v1.2-Alpha] - Untitled.paint", 800, 600);
+        super("Paint: Stone Age Edition [v1.3-Alpha] - Untitled.paint", 800, 600);
         MenuBar mb = new MenuBar();
         Menu fileMenu = new Menu("File");
         Menu editMenu = new Menu("Edit");
@@ -95,11 +100,13 @@ public class PaintStoneAgeEdition extends PaintFrame {
         startY = this.getInsets().top;
         drawMode = DrawMode.DEFAULT;
         shapesToDraw = new Vector<>();
+        inputTxt = new Vector<>();
         lineColor = Color.BLACK;
+        isSquare = false;
         thickness = 1;
         uiSideMenuSize = 20;
-        paintUI = new DrawableUI();
 
+        paintUI = new DrawableUI();
         this.setVisible(true);
     }
 
@@ -107,11 +114,14 @@ public class PaintStoneAgeEdition extends PaintFrame {
 
     @Override
     public void paint(Graphics g) {
-        for(int i = 0; i < shapesToDraw.size(); i++) {shapesToDraw.get(i).draw(g, zoom, startX, startY);}
-        if(drawMode == DrawMode.DRAW_LINE || drawMode == DrawMode.DRAW_OVAL || drawMode == DrawMode.DRAW_RECTANGLE) {previewShape.draw(g, zoom, startX, startY);}
+        Graphics2D g2d = (Graphics2D) g;
+        for(int i = 0; i < shapesToDraw.size(); i++) {shapesToDraw.get(i).draw(g2d, zoom, startX, startY);}
+        if(drawMode == DrawMode.DRAW_LINE || drawMode == DrawMode.DRAW_OVAL || drawMode == DrawMode.DRAW_RECTANGLE) {
+            previewShape.draw(g2d, zoom, startX, startY);
+        }
         paintUI.updateFgColor(lineColor);
         paintUI.updateBgColor(fillColor);
-        paintUI.draw(g, zoom, startX, startY);
+        paintUI.draw(g2d, zoom, startX, startY);
     }
 
     @Override
@@ -125,27 +135,80 @@ public class PaintStoneAgeEdition extends PaintFrame {
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {
+        switch(e.getKeyCode()) {
+            case KeyEvent.VK_CONTROL:
+                isSquare = true;
+                break;
+            case KeyEvent.VK_BACK_SPACE:
+                if(!inputTxt.isEmpty()) {inputTxt.remove(inputTxt.size() - 1);}
+                break;
+            case KeyEvent.VK_ENTER:
+                inputTxt = new Vector<>();
+                break;
+            default:
+                if(Character.isDefined(e.getKeyChar())) {inputTxt.add(e.getKeyChar());}
+                break;
+        }
+    }
+
+    public void keyReleased(KeyEvent e) {isSquare = false;}
 
     @Override
     public void mousePressed(MouseEvent e) {
         if(e.getButton() == MouseEvent.BUTTON1) {
-            if(paintUI.uiOptionBox.get(0).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {drawMode = DrawMode.DRAW_TYPE_LINE;}
-            if(paintUI.uiOptionBox.get(1).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {drawMode = DrawMode.DRAW_TYPE_RECTANGLE;}
-            if(paintUI.uiOptionBox.get(2).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {drawMode = DrawMode.DRAW_TYPE_OVAL;}
-            if(paintUI.uiOptionBox.get(3).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {thickness = 1; repaint();}
-            if(paintUI.uiOptionBox.get(4).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {thickness = 2; repaint();}
-            if(paintUI.uiOptionBox.get(5).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {thickness = 4; repaint();}
-            if(paintUI.uiOptionBox.get(6).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {thickness = 8; repaint();}
-            if(paintUI.uiOptionBox.lastElement().clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {paintUI.setUiSideMenuSize(uiSideMenuSize); repaint(); return;}
+            if (paintUI.uiOptionBox.lastElement().clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                paintUI.setUiSideMenuSize(uiSideMenuSize);
+                repaint();
+                return;
+            }
             if(paintUI.getUiSideMenuSize() == 120) {
-                for(int i = 0; i < paintUI.uiOptionBox.size(); i++) {
-                    if(paintUI.uiOptionBox.get(i).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY)) && paintUI.uiOptionBox.get(i).getBoxType() == DrawableUIOptionBox.BOX_TYPE_COLORs_FG) {
+                if (paintUI.uiOptionBox.get(0).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    drawMode = DrawMode.SELECT;
+                    paintUI.updateSelectedOption(0);
+                    repaint();
+                }
+                if (paintUI.uiOptionBox.get(2).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    drawMode = DrawMode.DRAW_TYPE_LINE;
+                    paintUI.updateSelectedOption(2);
+                    repaint();
+                }
+                if (paintUI.uiOptionBox.get(3).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    drawMode = DrawMode.DRAW_TYPE_RECTANGLE;
+                    paintUI.updateSelectedOption(3);
+                    repaint();
+                }
+                if (paintUI.uiOptionBox.get(4).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    drawMode = DrawMode.DRAW_TYPE_OVAL;
+                    paintUI.updateSelectedOption(4);
+                    repaint();
+                }
+                if (paintUI.uiOptionBox.get(5).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    thickness = 1;
+                    repaint();
+                }
+                if (paintUI.uiOptionBox.get(6).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    thickness = 2;
+                    repaint();
+                }
+                if (paintUI.uiOptionBox.get(7).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    thickness = 4;
+                    repaint();
+                }
+                if (paintUI.uiOptionBox.get(8).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    thickness = 8;
+                    repaint();
+                }
+
+                for (int i = 0; i < paintUI.uiOptionBox.size(); i++) {
+                    if (paintUI.uiOptionBox.get(i).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))
+                            && paintUI.uiOptionBox.get(i).getBoxType() == DrawableUIOptionBox.BOX_TYPE_COLORs_FG) {
                         lineColor = paintUI.uiOptionBox.get(i).getFillColor();
                         repaint();
                         break;
                     }
-                    if(paintUI.uiOptionBox.get(i).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY)) && paintUI.uiOptionBox.get(i).getBoxType() == DrawableUIOptionBox.BOX_TYPE_COLORs_BG) {
+                    if (paintUI.uiOptionBox.get(i).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))
+                            && paintUI.uiOptionBox.get(i).getBoxType() == DrawableUIOptionBox.BOX_TYPE_COLORs_BG) {
                         fillColor = paintUI.uiOptionBox.get(i).getFillColor();
                         repaint();
                         break;
@@ -156,32 +219,38 @@ public class PaintStoneAgeEdition extends PaintFrame {
             switch(drawMode) {
                 case DRAW_TYPE_LINE:
                     if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
-                    startPoint = new Point((int)((e.getPoint().x - startX)/ zoom), (int)((e.getPoint().y -startY) / zoom));
+                    startPoint = new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom));
                     drawMode = DrawMode.DRAW_LINE;
                     break;
                 case DRAW_LINE:
                     if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
-                    shapesToDraw.add(new DrawableLine(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom), (int)((e.getPoint().y -startY) / zoom)), lineColor, thickness));
+                    shapesToDraw.add(new DrawableLine(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom)), lineColor, thickness, isSquare));
                     drawMode = DrawMode.DRAW_TYPE_LINE;
                     break;
                 case DRAW_TYPE_OVAL:
                     if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
-                    startPoint = new Point((int)((e.getPoint().x - startX)/ zoom), (int)((e.getPoint().y -startY) / zoom));
+                    startPoint = new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom));
                     drawMode = DrawMode.DRAW_OVAL;
                     break;
                 case DRAW_OVAL:
                     if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
-                    shapesToDraw.add(new DrawableOval(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom), (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness));
+                    shapesToDraw.add(new DrawableOval(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare));
                     drawMode = DrawMode.DRAW_TYPE_OVAL;
                     break;
                 case DRAW_TYPE_RECTANGLE:
                     if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
-                    startPoint = new Point((int)((e.getPoint().x - startX)/ zoom), (int)((e.getPoint().y -startY) / zoom));
+                    startPoint = new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom));
                     drawMode = DrawMode.DRAW_RECTANGLE;
                     break;
                 case DRAW_RECTANGLE:
                     if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
-                    shapesToDraw.add(new DrawableRectangle(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom), (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness));
+                    shapesToDraw.add(new DrawableRectangle(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare));
                     drawMode = DrawMode.DRAW_TYPE_RECTANGLE;
                     break;
                 default:
@@ -195,17 +264,20 @@ public class PaintStoneAgeEdition extends PaintFrame {
         switch(drawMode) {
             case DRAW_LINE:
                 if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
-                previewShape = new DrawableLine(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom), (int)((e.getPoint().y -startY) / zoom)), lineColor, thickness);
+                previewShape = new DrawableLine(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                        (int)((e.getPoint().y -startY) / zoom)), lineColor, thickness, isSquare);
                 repaint();
                 break;
             case DRAW_OVAL:
                 if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
-                previewShape = new DrawableOval(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom), (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness);
+                previewShape = new DrawableOval(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                        (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare);
                 repaint();
                 break;
             case DRAW_RECTANGLE:
                 if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
-                previewShape = new DrawableRectangle(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom), (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness);
+                previewShape = new DrawableRectangle(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                        (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare);
                 repaint();
                 break;
             default:

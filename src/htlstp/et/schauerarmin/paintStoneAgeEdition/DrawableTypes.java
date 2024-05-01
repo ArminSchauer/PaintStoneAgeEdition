@@ -15,14 +15,17 @@ public abstract class DrawableTypes implements Drawable {
     private Color lineColor;
     private Color fillColor;
     private int thickness;
+    private boolean isSquare;
 
-    public DrawableTypes(Point pointA, Point pointB, byte type, Color lineColor, Color fillColor, int thickness) {
+    public DrawableTypes(Point pointA, Point pointB, byte type, Color lineColor,
+                         Color fillColor, int thickness, boolean isSquare) {
         this.pointA = pointA;
         this.pointB = pointB;
         this.type = type;
         this.lineColor = lineColor;
         this.fillColor = fillColor;
         this.thickness = thickness;
+        this.isSquare = isSquare;
     }
 
     public Point getPointA() {
@@ -62,5 +65,12 @@ public abstract class DrawableTypes implements Drawable {
     }
     public void setThickness(int thickness) {
         this.thickness = thickness;
+    }
+
+    public boolean getIsSquare() {
+        return this.isSquare;
+    }
+    public void setIsSquare(boolean isSquare) {
+        this.isSquare = isSquare;
     }
 }
