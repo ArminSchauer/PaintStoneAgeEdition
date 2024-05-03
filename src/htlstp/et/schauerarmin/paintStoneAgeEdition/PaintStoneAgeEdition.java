@@ -1,10 +1,7 @@
 package htlstp.et.schauerarmin.paintStoneAgeEdition;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.Vector;
 
 public class PaintStoneAgeEdition extends PaintFrame {
@@ -25,7 +22,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
     private final DrawableUI paintUI;
 
     public PaintStoneAgeEdition() {
-        super("Paint: Stone Age Edition [v1.3-Alpha] - Untitled.paint", 800, 600);
+        super("Paint: Stone Age Edition [v1.3-Beta] - Untitled.paint", 800, 600);
         MenuBar mb = new MenuBar();
         Menu fileMenu = new Menu("File");
         Menu editMenu = new Menu("Edit");
@@ -116,7 +113,8 @@ public class PaintStoneAgeEdition extends PaintFrame {
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         for(int i = 0; i < shapesToDraw.size(); i++) {shapesToDraw.get(i).draw(g2d, zoom, startX, startY);}
-        if(drawMode == DrawMode.DRAW_LINE || drawMode == DrawMode.DRAW_OVAL || drawMode == DrawMode.DRAW_RECTANGLE) {
+        if(drawMode == DrawMode.DRAW_LINE || drawMode == DrawMode.DRAW_OVAL ||
+                drawMode == DrawMode.DRAW_RECTANGLE || drawMode == DrawMode.DRAW_ISOSCELES_TRIANGLE || drawMode == DrawMode.DRAW_RIGHT_TRIANGLE) {
             previewShape.draw(g2d, zoom, startX, startY);
         }
         paintUI.updateFgColor(lineColor);
@@ -168,34 +166,44 @@ public class PaintStoneAgeEdition extends PaintFrame {
                     paintUI.updateSelectedOption(0);
                     repaint();
                 }
-                if (paintUI.uiOptionBox.get(2).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                if (paintUI.uiOptionBox.get(1).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
                     drawMode = DrawMode.DRAW_TYPE_LINE;
+                    paintUI.updateSelectedOption(1);
+                    repaint();
+                }
+                if (paintUI.uiOptionBox.get(2).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    drawMode = DrawMode.DRAW_TYPE_RECTANGLE;
                     paintUI.updateSelectedOption(2);
                     repaint();
                 }
                 if (paintUI.uiOptionBox.get(3).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
-                    drawMode = DrawMode.DRAW_TYPE_RECTANGLE;
+                    drawMode = DrawMode.DRAW_TYPE_OVAL;
                     paintUI.updateSelectedOption(3);
                     repaint();
                 }
                 if (paintUI.uiOptionBox.get(4).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
-                    drawMode = DrawMode.DRAW_TYPE_OVAL;
+                    drawMode = DrawMode.DRAW_TYPE_ISOSCELES_TRIANGLE;
                     paintUI.updateSelectedOption(4);
                     repaint();
                 }
                 if (paintUI.uiOptionBox.get(5).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
-                    thickness = 1;
+                    drawMode = DrawMode.DRAW_TYPE_RIGHT_TRIANGLE;
+                    paintUI.updateSelectedOption(5);
                     repaint();
                 }
                 if (paintUI.uiOptionBox.get(6).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
-                    thickness = 2;
+                    thickness = 1;
                     repaint();
                 }
                 if (paintUI.uiOptionBox.get(7).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
-                    thickness = 4;
+                    thickness = 2;
                     repaint();
                 }
                 if (paintUI.uiOptionBox.get(8).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    thickness = 4;
+                    repaint();
+                }
+                if (paintUI.uiOptionBox.get(9).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
                     thickness = 8;
                     repaint();
                 }
@@ -253,6 +261,30 @@ public class PaintStoneAgeEdition extends PaintFrame {
                             (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare));
                     drawMode = DrawMode.DRAW_TYPE_RECTANGLE;
                     break;
+                case DRAW_TYPE_ISOSCELES_TRIANGLE:
+                    if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                    startPoint = new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom));
+                    drawMode = DrawMode.DRAW_ISOSCELES_TRIANGLE;
+                    break;
+                case DRAW_ISOSCELES_TRIANGLE:
+                    if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                    shapesToDraw.add(new DrawableIsoscelesTriangle(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare));
+                    drawMode = DrawMode.DRAW_TYPE_ISOSCELES_TRIANGLE;
+                    break;
+                case DRAW_TYPE_RIGHT_TRIANGLE:
+                    if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                    startPoint = new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom));
+                    drawMode = DrawMode.DRAW_RIGHT_TRIANGLE;
+                    break;
+                case DRAW_RIGHT_TRIANGLE:
+                    if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                    shapesToDraw.add(new DrawableRightTriangle(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                            (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare));
+                    drawMode = DrawMode.DRAW_TYPE_RIGHT_TRIANGLE;
+                    break;
                 default:
                     break;
             }
@@ -280,6 +312,18 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare);
                 repaint();
                 break;
+            case DRAW_ISOSCELES_TRIANGLE:
+                if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                previewShape = new DrawableIsoscelesTriangle(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                        (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare);
+                repaint();
+                break;
+            case DRAW_RIGHT_TRIANGLE:
+                if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                previewShape = new DrawableRightTriangle(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                        (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare);
+                repaint();
+                break;
             default:
                 break;
         }
@@ -298,6 +342,10 @@ public class PaintStoneAgeEdition extends PaintFrame {
         switch(e.getActionCommand()) {
             case "NEW_FILE":
                 shapesToDraw = new Vector<>();
+                paintUI.updateSelectedOption(-1);
+                thickness = 1;
+                lineColor = Color.BLACK;
+                fillColor = null;
                 drawMode = DrawMode.DEFAULT;
                 break;
             case "EXIT":

@@ -3,12 +3,19 @@ package htlstp.et.schauerarmin.paintStoneAgeEdition;
 public enum DrawMode {
 
     DEFAULT,
+
+    SELECT,
+
     DRAW_LINE,
-    DRAW_OVAL,
     DRAW_RECTANGLE,
+    DRAW_OVAL,
+    DRAW_ISOSCELES_TRIANGLE,
+    DRAW_RIGHT_TRIANGLE,
+
     DRAW_TYPE_LINE,
-    DRAW_TYPE_OVAL,
     DRAW_TYPE_RECTANGLE,
-    SELECT
+    DRAW_TYPE_OVAL,
+    DRAW_TYPE_ISOSCELES_TRIANGLE,
+    DRAW_TYPE_RIGHT_TRIANGLE
 
 }

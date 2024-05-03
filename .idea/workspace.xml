@@ -4,22 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="16742e2a-3065-4d73-8fd4-69c40a49c9da" name="Changes" comment="Paint: Stone Age Edition [v1.2-Alpha]">
-      <change afterPath="$PROJECT_DIR$/res/draw_type_line.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/draw_type_oval.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/draw_type_rectangle.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/tool_select.png" afterDir="false" />
+    <list default="true" id="16742e2a-3065-4d73-8fd4-69c40a49c9da" name="Changes" comment="Paint: Stone Age Edition [v1.3-Alpha]">
+      <change afterPath="$PROJECT_DIR$/res/draw_type_isosceles_triangle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/res/draw_type_right_triangle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableIsoscelesTriangle.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRightTriangle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.MD" beforeDir="false" afterPath="$PROJECT_DIR$/README.MD" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawMode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/Drawable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/Drawable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableLine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableLine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableOval.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableOval.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRectangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRectangle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableTypes.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUIOptionBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUIOptionBox.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintStoneAgeEdition.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintStoneAgeEdition.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -119,7 +113,9 @@
       <workItem from="1714456704952" duration="80000" />
       <workItem from="1714462694640" duration="8738000" />
       <workItem from="1714484614748" duration="7227000" />
-      <workItem from="1714582386096" duration="13036000" />
+      <workItem from="1714582386096" duration="13437000" />
+      <workItem from="1714724167710" duration="495000" />
+      <workItem from="1714761448510" duration="5645000" />
     </task>
     <task id="LOCAL-00001" summary="Paint: Stone Age Edition [v1.0-Alpha]">
       <option name="closed" value="true" />
@@ -153,7 +149,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714432199631</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Paint: Stone Age Edition [v1.3-Alpha]">
+      <option name="closed" value="true" />
+      <created>1714603615275</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1714603615275</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -176,6 +180,7 @@
     <MESSAGE value="README" />
     <MESSAGE value="Paint: Stone Age Edition [v1.1-Alpha]" />
     <MESSAGE value="Paint: Stone Age Edition [v1.2-Alpha]" />
-    <option name="LAST_COMMIT_MESSAGE" value="Paint: Stone Age Edition [v1.2-Alpha]" />
+    <MESSAGE value="Paint: Stone Age Edition [v1.3-Alpha]" />
+    <option name="LAST_COMMIT_MESSAGE" value="Paint: Stone Age Edition [v1.3-Alpha]" />
   </component>
 </project>

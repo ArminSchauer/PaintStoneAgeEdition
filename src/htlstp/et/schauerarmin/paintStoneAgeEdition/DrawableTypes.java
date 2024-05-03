@@ -8,6 +8,8 @@ public abstract class DrawableTypes implements Drawable {
     public static final byte TYPE_LINE = 1;
     public static final byte TYPE_RECTANGLE = 2;
     public static final byte TYPE_OVAL = 3;
+    public static final byte TYPE_ISOSCELES_TRIANGLE = 4;
+    public static final byte TYPE_RIGHT_TRIANGLE = 5;
 
     private Point pointA;
     private Point pointB;

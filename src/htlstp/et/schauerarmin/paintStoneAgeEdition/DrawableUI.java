@@ -1,6 +1,5 @@
 package htlstp.et.schauerarmin.paintStoneAgeEdition;
 
-import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
@@ -58,6 +57,10 @@ public class DrawableUI implements Drawable {
                 g.drawImage(i, frameWidth - 87, 75 + startY, null);
                 i = ImageIO.read(new File("res/draw_type_oval.png"));
                 g.drawImage(i, frameWidth - 58, 75 + startY, null);
+                i = ImageIO.read(new File("res/draw_type_isosceles_triangle.png"));
+                g.drawImage(i, frameWidth - 29, 75 + startY, null);
+                i = ImageIO.read(new File("res/draw_type_right_triangle.png"));
+                g.drawImage(i, frameWidth - 116, 104 + startY, null);
             } catch (IOException e) {System.exit(1);}
 
 
@@ -86,12 +89,13 @@ public class DrawableUI implements Drawable {
 
         /* selectable tools */
         newOptionBox(Color.WHITE, frameWidth - 116, 25, 25, 25, DrawableUIOptionBox.BOX_TYPE_TOOL);
-        newOptionBox(Color.WHITE, frameWidth - 87, 25, 25, 25, DrawableUIOptionBox.BOX_TYPE_TOOL);
 
         /* selectable shapes */
         newOptionBox(Color.WHITE, frameWidth - 116, 75, 25, 25, DrawableUIOptionBox.BOX_TYPE_SHAPE);
         newOptionBox(Color.WHITE, frameWidth - 87, 75, 25, 25, DrawableUIOptionBox.BOX_TYPE_SHAPE);
         newOptionBox(Color.WHITE, frameWidth - 58, 75, 25, 25, DrawableUIOptionBox.BOX_TYPE_SHAPE);
+        newOptionBox(Color.WHITE, frameWidth - 29, 75, 25, 25, DrawableUIOptionBox.BOX_TYPE_SHAPE);
+        newOptionBox(Color.WHITE, frameWidth - 116, 104, 25, 25, DrawableUIOptionBox.BOX_TYPE_SHAPE);
 
         /* selectable thickness */
         newOptionBox(Color.WHITE, frameWidth - 115, 145,
@@ -221,16 +225,16 @@ public class DrawableUI implements Drawable {
     }
 
     public void updateSelectedOption(int index) {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             this.uiOptionBox.get(i).setThickness(1);
         }
-        this.uiOptionBox.get(index).setThickness(2);
+        if(index >= 0) {this.uiOptionBox.get(index).setThickness(2);}
     }
     public void updateFgColor(Color c) {
-        this.uiOptionBox.get(9).setFillColor(c);
+        this.uiOptionBox.get(10).setFillColor(c);
     }
     public void updateBgColor(Color c) {
-        this.uiOptionBox.get(10).setFillColor(c);
+        this.uiOptionBox.get(11).setFillColor(c);
     }
 
 }

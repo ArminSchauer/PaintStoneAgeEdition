@@ -33,4 +33,13 @@
     + (+) line thickness finished
     + (+) text input system
     + (+) UI Icons
-    + (+) when CTRL is pressed every shapes becomes "square" 
+    + (+) when CTRL is pressed every shapes becomes "square"
+
+
+- [v1.3-Beta]:
+    + (+) drawable shapes:
+        + isosceles triangle
+        + right triangle
+    + (+) UI icons
+      + (+) added resets for thickness,<br>
+      color and selected tool/shape to CTRL+N 
