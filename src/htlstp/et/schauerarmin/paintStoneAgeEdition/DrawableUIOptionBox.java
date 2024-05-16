@@ -63,6 +63,9 @@ public class DrawableUIOptionBox extends DrawableTypes {
                 && (this.getPointA().y <= mousePoint.y) && (this.getPointB().y >= mousePoint.y);
     }
 
+    @Override
+    public boolean selected(Point p, double zoom) {return false;}
+
     public int getBoxType() {
         return this.boxType;
     }

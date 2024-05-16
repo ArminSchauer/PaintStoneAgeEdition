@@ -41,5 +41,17 @@
         + isosceles triangle
         + right triangle
     + (+) UI icons
-      + (+) added resets for thickness,<br>
-      color and selected tool/shape to CTRL+N 
+    + (+) added resets for thickness,<br>
+    color and selected tool/shape to CTRL+N 
+
+
+- [1.4-Alpha]:
+    + improved drawing of following shapes:
+        + rectangle
+        + isosceles triangle
+        + right triangle
+    + every shape is allowed to resize and be sized in all directions
+    + improved "square" feature
+    + (+) added selection system
+    + (+) help menu
+

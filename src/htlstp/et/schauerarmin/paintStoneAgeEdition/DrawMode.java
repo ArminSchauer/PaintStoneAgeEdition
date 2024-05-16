@@ -5,6 +5,10 @@ public enum DrawMode {
     DEFAULT,
 
     SELECT,
+    RESIZE_NW,
+    RESIZE_NE,
+    RESIZE_SE,
+    RESIZE_SW,
 
     DRAW_LINE,
     DRAW_RECTANGLE,

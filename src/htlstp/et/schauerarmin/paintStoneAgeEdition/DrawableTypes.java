@@ -17,7 +17,7 @@ public abstract class DrawableTypes implements Drawable {
     private Color lineColor;
     private Color fillColor;
     private int thickness;
-    private boolean isSquare;
+    private final boolean isSquare;
 
     public DrawableTypes(Point pointA, Point pointB, byte type, Color lineColor,
                          Color fillColor, int thickness, boolean isSquare) {
@@ -29,6 +29,23 @@ public abstract class DrawableTypes implements Drawable {
         this.thickness = thickness;
         this.isSquare = isSquare;
     }
+
+    public void drawPolygon(Graphics2D g, Polygon p) {
+        g.setStroke(new BasicStroke(this.getThickness()));
+        if(this.getFillColor() != null) {
+            g.setColor(this.getFillColor());
+            g.fillPolygon(p);
+        }
+        g.setColor(this.getLineColor());
+        g.drawPolygon(p);
+    }
+
+    public void drawSelected(Graphics2D g, double zoom, int startX, int startY) {
+        this.draw(g, zoom, startX, startY);
+        new DrawableRectangle(this.getPointA(), this.getPointB(), Color.GRAY, null, 1, this.getIsSquare()).draw(g, zoom, startX, startY);
+    }
+
+    abstract boolean selected(Point p, double zoom);
 
     public Point getPointA() {
         return this.pointA;
@@ -71,8 +88,5 @@ public abstract class DrawableTypes implements Drawable {
 
     public boolean getIsSquare() {
         return this.isSquare;
-    }
-    public void setIsSquare(boolean isSquare) {
-        this.isSquare = isSquare;
     }
 }

@@ -11,15 +11,39 @@ public class DrawableIsoscelesTriangle extends DrawableTypes {
 
     @Override
     public void draw(Graphics2D g, double zoom, int startX, int startY) {
-        g.setColor(this.getLineColor());
-        g.setStroke(new BasicStroke(this.getThickness()));
-        g.drawLine(this.getPointA().x + (int)((this.getPointB().x - this.getPointA().x)/2 * zoom) + startX,
+        int[] pointsX = {
+                (int)(this.getPointA().x * zoom) + startX,
+                this.getPointA().x + (int)((this.getPointB().x - this.getPointA().x)/2 * zoom) + startX,
+                (int)(this.getPointB().x * zoom) + startX
+        };
+        int[] pointsY = {
+                (int)(this.getPointB().y * zoom) + startY,
                 (int)(this.getPointA().y * zoom) + startY,
-                (int)(this.getPointA().x * zoom) + startX, (int)(this.getPointB().y * zoom) + startY);
-        g.drawLine(this.getPointA().x + (int)((this.getPointB().x - this.getPointA().x)/2 * zoom) + startX,
-                (int)(this.getPointA().y * zoom) + startY,
-                (int)(this.getPointB().x * zoom) + startX, (int)(this.getPointB().y * zoom) + startY);
-        g.drawLine((int)(this.getPointA().x * zoom) + startX, (int)(this.getPointB().y * zoom) + startY,
-                (int)(this.getPointB().x * zoom) + startX, (int)(this.getPointB().y * zoom) + startY);
+                (int)(this.getPointB().y * zoom) + startY
+        };
+
+        Polygon isoscelesTriangle = new Polygon(pointsX, pointsY, 3);
+        this.drawPolygon(g, isoscelesTriangle);
+    }
+
+    @Override
+    public boolean selected(Point p, double zoom) {
+        Point pointC = new Point(this.getPointA().x + (int)((this.getPointB().x - this.getPointA().x)/2 * zoom),
+                (int) (this.getPointA().y * zoom));
+        double[] cAP = {p.x - this.getPointA().x * zoom, p.y - this.getPointB().y * zoom};
+        double[] cBP = {p.x - this.getPointB().x * zoom, p.y - this.getPointB().y * zoom};
+        double[] bAP = {p.x - this.getPointA().x * zoom, p.y - this.getPointB().y * zoom};
+        double[] bCP = {p.x - pointC.x, p.y - this.getPointA().y * zoom};
+        double[] aBP = {p.x - this.getPointB().x * zoom, p.y - this.getPointB().y * zoom};
+        double[] aCP = {p.x - pointC.x, p.y - this.getPointA().y * zoom};
+        double[] AB = {this.getPointB().x * zoom - this.getPointA().x * zoom, 0};
+        double[] AC = {pointC.x - this.getPointA().x, pointC.y - this.getPointB().y};
+        double[] BC = {pointC.x - this.getPointB().x, pointC.y - this.getPointB().y};
+
+        boolean onLineA = Math.abs(aBP[1] * aCP[0] - aBP[0] * aCP[1]) < 10 * Math.sqrt(BC[0]*BC[0] + BC[1]*BC[1]);
+        boolean onLineB = Math.abs(bAP[1] * bCP[0] - bAP[0] * bCP[1]) < 10 * Math.sqrt(AC[0]*AC[0] + AC[1]*AC[1]);
+        boolean onLineC = Math.abs(cAP[1] * cBP[0] - cAP[0] * cBP[1]) < 10 * Math.sqrt(AB[0]*AB[0] + AB[1]*AB[1]);
+
+        return onLineA || onLineB || onLineC;
     }
 }
