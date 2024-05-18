@@ -1,0 +1,78 @@
+@font-face {
+    font-family: "PTSans-Regular";
+    src: url("../fonts/PTSans-Regular.ttf");
+}
+@font-face {
+    font-family: "PTSans-Bold";
+    src: url("../fonts/PTSans-Bold.ttf");
+}
+
+* {
+    margin: 0;
+}
+#lang {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    text-transform: uppercase;
+}
+#lang a {
+    font-family: PTSans-Regular, sans-serif;
+    text-decoration: none;
+    color: #808080;
+}
+#lang-txt {
+    font-family: PTSans-Regular, sans-serif;
+    margin-right: 10px;
+}
+h1 {
+    font-family: PTSans-Bold, sans-serif;
+    position: absolute;
+    top: 35px;
+    left: 85px;
+    text-transform: uppercase;
+}
+h3 {
+    font-family: PTSans-Bold, sans-serif;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+#all-shortcuts {
+    position: absolute;
+    top: 120px;
+    left: 85px;
+    right: 85px;
+}
+#file-tab-shortcuts {
+    position: relative;
+    left: 35px;
+    margin-bottom: 75px;
+}
+#edit-tab-shortcuts {
+    position: relative;
+    left: 35px;
+    margin-bottom: 75px;
+}
+#select-tab-shortcuts {
+    position: relative;
+    left: 35px;
+    margin-bottom: 75px;
+}
+#view-tab-shortcuts {
+    position: relative;
+    left: 35px;
+}
+.shortcut-container {
+    position: relative;
+    left: 35px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.shortcut {
+    font-family: PTSans-Regular, sans-serif;
+}
+.explanation {
+    font-family: PTSans-Regular, sans-serif;
+    position: absolute;
+    left: 250px;
+}

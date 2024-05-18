@@ -1,12 +1,17 @@
 package htlstp.et.schauerarmin.paintStoneAgeEdition;
 
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
+import java.io.*;
 import java.net.URL;
 import java.util.Vector;
 
 public class PaintStoneAgeEdition extends PaintFrame {
 
+    private static final String title = "Paint: Stone Age Edition [v1.5-Alpha]";
     private double zoom;
     private int startX; // X offset of the left side
     private int startY; // Y offset of the title bar
@@ -14,6 +19,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
     private Color lineColor;
     private Color fillColor;
     private Cursor cursor;
+    private final String locationOnHardDrive;
     private boolean isSquare;
     public static int thickness;
     public static int uiSideMenuSize;
@@ -24,15 +30,19 @@ public class PaintStoneAgeEdition extends PaintFrame {
     private Vector<DrawableRectangle> controlRectangles;
     private Vector<Character> inputTxt;
     private final DrawableUI paintUI;
+    private boolean saved;
+    private String saveName;
 
     public PaintStoneAgeEdition() {
-        super("Paint: Stone Age Edition [v1.4-Beta] - Untitled.paint", 800, 600);
+        super(title, 800, 600);
         MenuBar mb = new MenuBar();
         Menu fileMenu = new Menu("File");
         Menu editMenu = new Menu("Edit");
         Menu selectMenu = new Menu("Select");
         Menu viewMenu = new Menu("View");
         Menu helpMenu = new Menu("Help");
+        Menu settingsMenu = new Menu("Settings");
+        Menu languages = new Menu("Languages");
 
         /* File Menu Tab*/
         fileMenu.addActionListener(this);
@@ -46,12 +56,27 @@ public class PaintStoneAgeEdition extends PaintFrame {
         saveFile.setActionCommand("SAVE_FILE");
         fileMenu.add(saveFile);
         MenuItem saveAsFile = new MenuItem("Save As", new MenuShortcut(KeyEvent.VK_S, true));
-        saveAsFile.setActionCommand("SAVE_AS_FILE");
+        saveAsFile.setActionCommand("SAVE_FILE_AS");
         fileMenu.add(saveAsFile);
+        fileMenu.addSeparator();
+        fileMenu.add(settingsMenu);
         fileMenu.addSeparator();
         MenuItem exitProgramm = new MenuItem("Exit");
         exitProgramm.setActionCommand("EXIT");
         fileMenu.add(exitProgramm);
+
+        /* Settings Menu */
+        settingsMenu.addActionListener(this);
+        settingsMenu.add(languages);
+
+        /* Language Menu */
+        languages.addActionListener(this);
+        MenuItem deAT = new MenuItem("Deutsch (Österreich)");
+        deAT.setActionCommand("DE-AT");
+        languages.add(deAT);
+        MenuItem enUS = new MenuItem("English (United States)");
+        enUS.setActionCommand("EN-US");
+        languages.add(enUS);
 
         /* Edit Menu Tab */
         editMenu.addActionListener(this);
@@ -91,13 +116,9 @@ public class PaintStoneAgeEdition extends PaintFrame {
 
         /* Help Menu Tab */
         helpMenu.addActionListener(this);
-        MenuItem help = new MenuItem("Help");
-        help.setActionCommand("HELP");
-        helpMenu.add(help);
         MenuItem shortcut = new MenuItem("Shortcuts");
         shortcut.setActionCommand("SHORTCUTS");
         helpMenu.add(shortcut);
-        helpMenu.addSeparator();
         MenuItem githubLink = new MenuItem("Github Repository");
         githubLink.setActionCommand("GITHUB_LINK");
         helpMenu.add(githubLink);
@@ -124,6 +145,18 @@ public class PaintStoneAgeEdition extends PaintFrame {
         thickness = 1;
         uiSideMenuSize = 20;
         cursor = new Cursor(Cursor.DEFAULT_CURSOR);
+        locationOnHardDrive = "C:/PaintAPP";
+        saved = false;
+        saveName = "";
+
+        if(!new File(locationOnHardDrive).exists()) {
+            if(!new File(locationOnHardDrive + "/saved").mkdirs()) {System.exit(1);}
+            try {
+                FileWriter fw = new FileWriter(locationOnHardDrive + "/.settings");
+                fw.write("!PAINTAPPSETTINGS\nLANG=EN-US");
+                fw.close();
+            } catch (IOException e) {System.exit(1);}
+        }
 
         paintUI = new DrawableUI();
         this.setCursor(cursor);
@@ -217,11 +250,6 @@ public class PaintStoneAgeEdition extends PaintFrame {
             case KeyEvent.VK_DELETE:
                 selectedShapes = new Vector<>();
                 controlRectangles = new Vector<>();
-                repaint();
-                break;
-            case KeyEvent.VK_ESCAPE:
-                drawMode = DrawMode.DEFAULT;
-                paintUI.updateSelectedOption(-1);
                 repaint();
                 break;
             default:
@@ -353,6 +381,10 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         if(previewShape != null) {shapesToDraw.add(previewShape);}
                         drawMode = DrawMode.DRAW_TYPE_LINE;
                         previewShape = null;
+                        if(!this.getTitle().contains("*")) {
+                            if(this.getTitle().equals(title)) {this.setTitle(title + saveName.concat(" - *"));}
+                            else {this.setTitle(title + saveName.concat("*"));}
+                        }
                         break;
                     case DRAW_TYPE_OVAL:
                         if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
@@ -365,6 +397,10 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         if(previewShape != null) {shapesToDraw.add(previewShape);}
                         drawMode = DrawMode.DRAW_TYPE_OVAL;
                         previewShape = null;
+                        if(!this.getTitle().contains("*")) {
+                            if(this.getTitle().equals(title)) {this.setTitle(title + saveName.concat(" - *"));}
+                            else {this.setTitle(title + saveName.concat("*"));}
+                        }
                         break;
                     case DRAW_TYPE_RECTANGLE:
                         if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
@@ -377,6 +413,10 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         if(previewShape != null) {shapesToDraw.add(previewShape);}
                         drawMode = DrawMode.DRAW_TYPE_RECTANGLE;
                         previewShape = null;
+                        if(!this.getTitle().contains("*")) {
+                            if(this.getTitle().equals(title)) {this.setTitle(title + saveName.concat(" - *"));}
+                            else {this.setTitle(title + saveName.concat("*"));}
+                        }
                         break;
                     case DRAW_TYPE_ISOSCELES_TRIANGLE:
                         if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
@@ -389,6 +429,10 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         if(previewShape != null) {shapesToDraw.add(previewShape);}
                         drawMode = DrawMode.DRAW_TYPE_ISOSCELES_TRIANGLE;
                         previewShape = null;
+                        if(!this.getTitle().contains("*")) {
+                            if(this.getTitle().equals(title)) {this.setTitle(title + saveName.concat(" - *"));}
+                            else {this.setTitle(title + saveName.concat("*"));}
+                        }
                         break;
                     case DRAW_TYPE_RIGHT_TRIANGLE:
                         if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
@@ -401,6 +445,10 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         if(previewShape != null) {shapesToDraw.add(previewShape);}
                         drawMode = DrawMode.DRAW_TYPE_RIGHT_TRIANGLE;
                         previewShape = null;
+                        if(!this.getTitle().contains("*")) {
+                            if(this.getTitle().equals(title)) {this.setTitle(title + saveName.concat(" - *"));}
+                            else {this.setTitle(title + saveName.concat("*"));}
+                        }
                         break;
                     default:
                         break;
@@ -844,6 +892,8 @@ public class PaintStoneAgeEdition extends PaintFrame {
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()) {
             case "NEW_FILE":
+                saved = false;
+                saveName = "";
                 shapesToDraw = new Vector<>();
                 selectedShapes = new Vector<>();
                 controlRectangles = new Vector<>();
@@ -854,9 +904,100 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 lineColor = Color.BLACK;
                 fillColor = null;
                 drawMode = DrawMode.DEFAULT;
+                this.setTitle(title);
+                break;
+            case "OPEN_FILE":
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader("C:/PaintAPP/saved/untitled.paint"));
+                    String dataLine;
+                    while((dataLine = reader.readLine()) != null) {shapesToDraw.addAll(convertStringToShapes(dataLine));}
+                    reader.close();
+                    saved = true;
+                    saveName = saveName.replace("*", "");
+                } catch (IOException ex) {}
+                break;
+            case "SAVE_FILE":
+                if(saved) {
+                    shapesToDraw.addAll(selectedShapes);
+                    selectedShapes = new Vector<>();
+                    controlRectangles = new Vector<>();
+                    try {
+                        FileWriter writer = new FileWriter(saveName);
+                        String[] dataLines = convertShapesToStringArray(shapesToDraw);
+                        for(int i = 0; i < dataLines.length; i++) {
+                            writer.write(dataLines[i] + "\n");
+                        }
+                        writer.close();
+                        saved = true;
+                        saveName = saveName.replace("*", "");
+                    } catch (IOException ex) {}
+                    this.setTitle(title + saveName);
+                }
+            case "SAVE_FILE_AS":
+                saveName = "C:/PaintAPP/saved/untitled.paint";
+                shapesToDraw.addAll(selectedShapes);
+                selectedShapes = new Vector<>();
+                controlRectangles = new Vector<>();
+                try {
+                    FileWriter writer = new FileWriter(saveName);
+                    String[] dataLines = convertShapesToStringArray(shapesToDraw);
+                    for(int i = 0; i < dataLines.length; i++) {
+                        writer.write(dataLines[i] + "\n");
+                    }
+                    writer.close();
+                    saved = true;
+                    saveName = " - ".concat(saveName);
+                } catch (IOException ex) {saveName = "";}
+                this.setTitle(title + saveName);
+                break;
+            case "DE-AT":
+                try {
+                    FileWriter writer = new FileWriter(locationOnHardDrive + "/.settings");
+                    writer.write("!PAINTAPPSETTINGS\nLANG=DE-AT");
+                    writer.close();
+                } catch (IOException ex) {break;}
+                this.dispose();
+                new PaintStoneAgeEdition();
+                break;
+            case "EN-US":
+                try {
+                    FileWriter writer = new FileWriter(locationOnHardDrive + "/.settings");
+                    writer.write("!PAINTAPPSETTINGS\nLANG=EN-US");
+                    writer.close();
+                } catch (IOException ex) {break;}
+                this.dispose();
+                new PaintStoneAgeEdition();
                 break;
             case "EXIT":
                 System.exit(0);
+                break;
+            case "CUT":
+                Clipboard cp_cut = Toolkit.getDefaultToolkit().getSystemClipboard();
+                StringSelection stringSelection_cut = new StringSelection(convertShapesToString(selectedShapes));
+                cp_cut.setContents(stringSelection_cut, null);
+                selectedShapes = new Vector<>();
+                controlRectangles = new Vector<>();
+                break;
+            case "COPY":
+                Clipboard cp_copy = Toolkit.getDefaultToolkit().getSystemClipboard();
+                StringSelection stringSelection_copy = new StringSelection(convertShapesToString(selectedShapes));
+                cp_copy.setContents(stringSelection_copy, null);
+                break;
+            case "PASTE":
+                shapesToDraw.addAll(selectedShapes);
+                selectedShapes = new Vector<>();
+                controlRectangles = new Vector<>();
+                Clipboard cp_paste = Toolkit.getDefaultToolkit().getSystemClipboard();
+                String content = "";
+                try {
+                    content = (String) cp_paste.getData(DataFlavor.stringFlavor);
+                } catch (Exception ex) {}
+                Vector<DrawableTypes> shapes = convertStringToShapes(content);
+                for(int i = 0; i < shapes.size(); i++) {
+                    shapes.get(i).setPointA(new Point(shapes.get(i).getPointA().x + 10, shapes.get(i).getPointA().y));
+                    shapes.get(i).setPointB(new Point(shapes.get(i).getPointB().x + 10, shapes.get(i).getPointB().y));
+                }
+                selectedShapes = shapes;
                 break;
             case "DELETE_ITEM":
                 selectedShapes = new Vector<>();
@@ -888,15 +1029,9 @@ public class PaintStoneAgeEdition extends PaintFrame {
             case "ZOOM_RESET":
                 zoom = 1d;
                 break;
-            case "HELP":
-                try {
-                    String path = new java.io.File("res/html/help.html").getCanonicalPath();
-                    Desktop.getDesktop().browse(new URL("file://" + path).toURI());}
-                catch (Exception ex) {System.out.println(ex.getMessage());}
-                break;
             case "SHORTCUTS":
                 try {
-                    String path = new java.io.File("res/html/shortcuts.html").getCanonicalPath();
+                    String path = new java.io.File("res/web/en-us/shortcuts.html").getCanonicalPath();
                     Desktop.getDesktop().browse(new URL("file://" + path).toURI());}
                 catch (Exception ex) {System.out.println(ex.getMessage());}
                 break;
@@ -909,5 +1044,75 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 break;
         }
         repaint();
+    }
+
+    public static String convertShapesToString(Vector<DrawableTypes> shapes) {
+        String returnString = "";
+
+        for(int i = 0; i < shapes.size(); i++) {
+            String shapeAsString;
+            if(shapes.get(i).getFillColor() == null) {
+                shapeAsString = shapes.get(i).getPointA().x + "," + shapes.get(i).getPointA().y + ";" +
+                        shapes.get(i).getPointB().x + "," + shapes.get(i).getPointB().y + ";" +
+                        shapes.get(i).getType() + ";" + shapes.get(i).getLineColor().getRGB() + ";" +
+                        shapes.get(i).getFillColor() + ";" + shapes.get(i).getThickness() + ";" +
+                        shapes.get(i).getIsSquare();
+            } else {
+                shapeAsString = shapes.get(i).getPointA().x + "," + shapes.get(i).getPointA().y + ";" +
+                        shapes.get(i).getPointB().x + "," + shapes.get(i).getPointB().y + ";" +
+                        shapes.get(i).getType() + ";" + shapes.get(i).getLineColor().getRGB() + ";" +
+                        shapes.get(i).getFillColor().getRGB() + ";" + shapes.get(i).getThickness() + ";" +
+                        shapes.get(i).getIsSquare();
+            }
+
+            returnString = returnString.concat(shapeAsString);
+            if(i != shapes.size() - 1) {
+                returnString = returnString.concat(":");
+            }
+        }
+
+        return returnString;
+    }
+
+    public static String[] convertShapesToStringArray(Vector<DrawableTypes> shapes) {
+        return convertShapesToString(shapes).split(":");
+    }
+
+    public static Vector<DrawableTypes> convertStringToShapes(String str) {
+        Vector<DrawableTypes> returnVector = new Vector<>();
+        String[] shapesAsStr = str.split(":");
+
+        for(int i = 0; i < shapesAsStr.length; i++) {
+            String[] args = shapesAsStr[i].split(";");
+            byte type = Byte.parseByte(args[2]);
+            Point a = new Point(Integer.parseInt(args[0].split(",")[0]), Integer.parseInt(args[0].split(",")[1]));
+            Point b = new Point(Integer.parseInt(args[1].split(",")[0]), Integer.parseInt(args[1].split(",")[1]));
+            Color fg = Color.getColor(args[3]);
+            Color bg = Color.getColor(args[4]);
+            int thickness = Integer.parseInt(args[5]);
+            boolean isSquare = Boolean.parseBoolean(args[6]);
+
+            switch(type) {
+                case DrawableTypes.TYPE_LINE:
+                    returnVector.add(new DrawableLine(a, b, fg, thickness, isSquare));
+                    break;
+                case DrawableTypes.TYPE_RECTANGLE:
+                    returnVector.add(new DrawableRectangle(a, b, fg, bg, thickness, isSquare));
+                    break;
+                case DrawableTypes.TYPE_OVAL:
+                    returnVector.add(new DrawableOval(a, b, fg, bg, thickness, isSquare));
+                    break;
+                case DrawableTypes.TYPE_ISOSCELES_TRIANGLE:
+                    returnVector.add(new DrawableIsoscelesTriangle(a, b, fg, bg, thickness, isSquare));
+                    break;
+                case DrawableTypes.TYPE_RIGHT_TRIANGLE:
+                    returnVector.add(new DrawableRightTriangle(a, b, fg, bg, thickness, isSquare));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return returnVector;
     }
 }

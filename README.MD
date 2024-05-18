@@ -55,3 +55,8 @@
     + (+) added selection system
     + (+) help menu
 
+
+- [1.5-Alpha]:
+    + finished help menu
+    + (+) cut, copy & paste
+    + (+) open, save & save as
