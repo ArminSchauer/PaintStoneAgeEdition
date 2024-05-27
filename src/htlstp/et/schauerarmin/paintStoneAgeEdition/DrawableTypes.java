@@ -1,6 +1,7 @@
 package htlstp.et.schauerarmin.paintStoneAgeEdition;
 
 import java.awt.*;
+import java.io.IOException;
 
 public abstract class DrawableTypes implements Drawable {
 
@@ -10,6 +11,8 @@ public abstract class DrawableTypes implements Drawable {
     public static final byte TYPE_OVAL = 3;
     public static final byte TYPE_ISOSCELES_TRIANGLE = 4;
     public static final byte TYPE_RIGHT_TRIANGLE = 5;
+    public static final byte TYPE_PENTAGON = 6;
+    public static final byte TYPE_HEXAGON = 7;
 
     private Point pointA;
     private Point pointB;
@@ -31,7 +34,6 @@ public abstract class DrawableTypes implements Drawable {
     }
 
     public void drawPolygon(Graphics2D g, Polygon p) {
-        g.setStroke(new BasicStroke(this.getThickness()));
         if(this.getFillColor() != null) {
             g.setColor(this.getFillColor());
             g.fillPolygon(p);
@@ -40,9 +42,9 @@ public abstract class DrawableTypes implements Drawable {
         g.drawPolygon(p);
     }
 
-    public void drawSelected(Graphics2D g, double zoom, int startX, int startY) {
+    public void drawSelected(Graphics2D g, double zoom, int startX, int startY) throws IOException {
         this.draw(g, zoom, startX, startY);
-        new DrawableRectangle(this.getPointA(), this.getPointB(), Color.GRAY, null, 1, this.getIsSquare()).draw(g, zoom, startX, startY);
+        new DrawableRectangle(this.getPointA(), this.getPointB(), Color.GRAY, null, 2, this.getIsSquare()).drawSelect(g, zoom, startX, startY);
     }
 
     abstract boolean selected(Point p, double zoom);

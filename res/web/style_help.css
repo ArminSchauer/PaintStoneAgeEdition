@@ -1,0 +1,108 @@
+@font-face {
+    font-family: "PTSans-Regular";
+    src: url("../fonts/PTSans-Regular.ttf");
+}
+@font-face {
+    font-family: "PTSans-Bold";
+    src: url("../fonts/PTSans-Bold.ttf");
+}
+@font-face {
+    font-family: "PTSans-Italic";
+    src: url("../fonts/PTSans-Italic.ttf");
+}
+
+#main-container {
+    position: absolute;
+    top: 120px;
+    left: 85px;
+    right: 85px;
+    font-family: PTSans-Regular, sans-serif;
+}
+#useful-sites {
+    position: relative;
+    left: 35px;
+    margin-bottom: 75px;
+}
+#useful-sites ul {
+    margin-bottom: 75px;
+}
+#useful-sites li {
+    margin: 5px;
+}
+#useful-sites a {
+    color: #808080;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+#useful-sites a:hover {
+    color: #ff0000;
+    text-decoration: underline;
+}
+#part-1 {
+    position: relative;
+    left: 35px;
+    margin-bottom: 75px;
+    width: 60vw;
+}
+#part-1 span {
+    font-family: PTSans-Italic, sans-serif;
+}
+#part-2 {
+    position: relative;
+    left: 35px;
+    margin-bottom: 75px;
+    width: 60vw;
+}
+#part-3 {
+    position: relative;
+    left: 35px;
+    margin-bottom: 75px;
+    width: 60vw;
+}
+#part-3 span {
+    font-family: PTSans-Italic, sans-serif;
+}
+#part-4 {
+    position: relative;
+    left: 35px;
+    margin-bottom: 75px;
+    width: 60vw;
+}
+#part-4 span {
+    font-family: PTSans-Italic, sans-serif;
+}
+#part-5 {
+    position: relative;
+    left: 35px;
+    margin-bottom: 75px;
+    width: 60vw;
+}
+.image {
+    width: 15px;
+}
+.sub-heading {
+    text-transform: uppercase;
+    font-family: PTSans-Bold, sans-serif;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+#name {
+    position: relative;
+    left: 20px;
+}
+#use {
+    position: relative;
+    left: 60px;
+}
+#types span {
+    font-family: PTSans-Regular, sans-serif;
+    position: relative;
+    left: 5px;
+}
+#examples p {
+    margin-bottom: 20px;
+    margin-left: 10px;
+}
+#examples div {
+    margin-left: 10px;
+}

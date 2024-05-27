@@ -13,7 +13,7 @@ public class DrawableIsoscelesTriangle extends DrawableTypes {
     public void draw(Graphics2D g, double zoom, int startX, int startY) {
         int[] pointsX = {
                 (int)(this.getPointA().x * zoom) + startX,
-                this.getPointA().x + (int)((this.getPointB().x - this.getPointA().x)/2 * zoom) + startX,
+                (int) (this.getPointA().x * zoom + (int)((this.getPointB().x - this.getPointA().x)/2 * zoom) + startX),
                 (int)(this.getPointB().x * zoom) + startX
         };
         int[] pointsY = {
@@ -22,6 +22,7 @@ public class DrawableIsoscelesTriangle extends DrawableTypes {
                 (int)(this.getPointB().y * zoom) + startY
         };
 
+        g.setStroke(new BasicStroke(this.getThickness()));
         Polygon isoscelesTriangle = new Polygon(pointsX, pointsY, 3);
         this.drawPolygon(g, isoscelesTriangle);
     }

@@ -1,5 +1,6 @@
 package htlstp.et.schauerarmin.paintStoneAgeEdition;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -7,11 +8,13 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.io.*;
 import java.net.URL;
+import java.util.HexFormat;
 import java.util.Vector;
 
 public class PaintStoneAgeEdition extends PaintFrame {
 
-    private static final String title = "Paint: Stone Age Edition [v1.5-Alpha]";
+    private static final String title = "Paint: Stone Age Edition [v2024:1a]";
+    private static final String settingsPath = "res/settings";
     private double zoom;
     private int startX; // X offset of the left side
     private int startY; // Y offset of the title bar
@@ -19,7 +22,6 @@ public class PaintStoneAgeEdition extends PaintFrame {
     private Color lineColor;
     private Color fillColor;
     private Cursor cursor;
-    private final String locationOnHardDrive;
     private boolean isSquare;
     public static int thickness;
     public static int uiSideMenuSize;
@@ -28,40 +30,86 @@ public class PaintStoneAgeEdition extends PaintFrame {
     private Vector<DrawableTypes> shapesToDraw;
     private Vector<DrawableTypes> selectedShapes;
     private Vector<DrawableRectangle> controlRectangles;
-    private Vector<Character> inputTxt;
     private final DrawableUI paintUI;
     private boolean saved;
+    private boolean optionNew;
+    private boolean optionOpen;
+    private boolean fatalError;
     private String saveName;
+    private Dialog d;
+    public static Vector<String> words;
+    private String lang;
+    private int exitCode;
 
     public PaintStoneAgeEdition() {
         super(title, 800, 600);
+        exitCode = 0;
+        fatalError = false;
+        paintUI = new DrawableUI();
+
+        lang = "";
+        int numOfWords = 0;
+        if(!new File(settingsPath).exists()) {
+            try {
+                FileWriter fw = new FileWriter(settingsPath);
+                fw.write("!PAINT_APP_SETTINGS\nLANG=en-us\nNUM_OF_WORDS=44");
+                fw.close();
+            } catch (IOException e) {
+                fatalError = true;
+                exitCode = 100;
+                d = getDialogErrorCode(100, false);
+                d.setVisible(true);
+            }
+        } else {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(settingsPath));
+                br.readLine();
+                lang = br.readLine().split("=")[1];
+                numOfWords = Integer.parseInt(br.readLine().split("=")[1]);
+                br.close();
+            } catch (Exception e) {
+                fatalError = true;
+                exitCode = 101;
+                d = getDialogErrorCode(101, false);
+                d.setVisible(true);
+            }
+        }
+
+        words = loadLanguage(lang);
+        if(words.size() != numOfWords) {
+            fatalError = true;
+            exitCode = 105;
+            d = getDialogErrorCode(105, false);
+            d.setVisible(true);
+        }
+
         MenuBar mb = new MenuBar();
-        Menu fileMenu = new Menu("File");
-        Menu editMenu = new Menu("Edit");
-        Menu selectMenu = new Menu("Select");
-        Menu viewMenu = new Menu("View");
-        Menu helpMenu = new Menu("Help");
-        Menu settingsMenu = new Menu("Settings");
-        Menu languages = new Menu("Languages");
+        Menu fileMenu = new Menu(words.get(0));
+        Menu editMenu = new Menu(words.get(1));
+        Menu selectMenu = new Menu(words.get(2));
+        Menu viewMenu = new Menu(words.get(3));
+        Menu helpMenu = new Menu(words.get(4));
+        Menu settingsMenu = new Menu(words.get(5));
+        Menu languages = new Menu(words.get(6));
 
         /* File Menu Tab*/
         fileMenu.addActionListener(this);
-        MenuItem newFile = new MenuItem("New", new MenuShortcut(KeyEvent.VK_N));
+        MenuItem newFile = new MenuItem(words.get(7), new MenuShortcut(KeyEvent.VK_N));
         newFile.setActionCommand("NEW_FILE");
         fileMenu.add(newFile);
-        MenuItem openFile = new MenuItem("Open", new MenuShortcut(KeyEvent.VK_O));
+        MenuItem openFile = new MenuItem(words.get(8), new MenuShortcut(KeyEvent.VK_O));
         openFile.setActionCommand("OPEN_FILE");
         fileMenu.add(openFile);
-        MenuItem saveFile = new MenuItem("Save", new MenuShortcut(KeyEvent.VK_S));
+        MenuItem saveFile = new MenuItem(words.get(9), new MenuShortcut(KeyEvent.VK_S));
         saveFile.setActionCommand("SAVE_FILE");
         fileMenu.add(saveFile);
-        MenuItem saveAsFile = new MenuItem("Save As", new MenuShortcut(KeyEvent.VK_S, true));
+        MenuItem saveAsFile = new MenuItem(words.get(10), new MenuShortcut(KeyEvent.VK_S, true));
         saveAsFile.setActionCommand("SAVE_FILE_AS");
         fileMenu.add(saveAsFile);
         fileMenu.addSeparator();
         fileMenu.add(settingsMenu);
         fileMenu.addSeparator();
-        MenuItem exitProgramm = new MenuItem("Exit");
+        MenuItem exitProgramm = new MenuItem(words.get(11));
         exitProgramm.setActionCommand("EXIT");
         fileMenu.add(exitProgramm);
 
@@ -80,46 +128,53 @@ public class PaintStoneAgeEdition extends PaintFrame {
 
         /* Edit Menu Tab */
         editMenu.addActionListener(this);
-        MenuItem cut = new MenuItem("Cut", new MenuShortcut(KeyEvent.VK_X));
+        MenuItem cut = new MenuItem(words.get(12), new MenuShortcut(KeyEvent.VK_X));
         cut.setActionCommand("CUT");
         editMenu.add(cut);
-        MenuItem copy = new MenuItem("Copy", new MenuShortcut(KeyEvent.VK_C));
+        MenuItem copy = new MenuItem(words.get(13), new MenuShortcut(KeyEvent.VK_C));
         copy.setActionCommand("COPY");
         editMenu.add(copy);
-        MenuItem paste = new MenuItem("Paste", new MenuShortcut(KeyEvent.VK_V));
+        MenuItem paste = new MenuItem(words.get(14), new MenuShortcut(KeyEvent.VK_V));
         paste.setActionCommand("PASTE");
         editMenu.add(paste);
-        MenuItem deleteItem = new MenuItem("Delete");
+        MenuItem deleteItem = new MenuItem(words.get(15));
         deleteItem.setActionCommand("DELETE_ITEM");
         editMenu.add(deleteItem);
 
         /* Select Menu Tab */
         selectMenu.addActionListener(this);
-        MenuItem selectAll = new MenuItem("All", new MenuShortcut(KeyEvent.VK_A));
+        MenuItem selectAll = new MenuItem(words.get(16), new MenuShortcut(KeyEvent.VK_A));
         selectAll.setActionCommand("SELECT_ALL");
         selectMenu.add(selectAll);
-        MenuItem selectNone = new MenuItem("None", new MenuShortcut(KeyEvent.VK_A, true));
+        MenuItem selectNone = new MenuItem(words.get(17), new MenuShortcut(KeyEvent.VK_A, true));
         selectNone.setActionCommand("SELECT_NONE");
         selectMenu.add(selectNone);
 
         /* View Menu Tab */
         viewMenu.addActionListener(this);
-        MenuItem zoomIn = new MenuItem("Zoom in", new MenuShortcut(KeyEvent.VK_PLUS));
+        MenuItem zoomIn = new MenuItem(words.get(18), new MenuShortcut(KeyEvent.VK_PLUS));
         zoomIn.setActionCommand("ZOOM_IN");
         viewMenu.add(zoomIn);
-        MenuItem zoomOut = new MenuItem("Zoom out", new MenuShortcut(KeyEvent.VK_MINUS));
+        MenuItem zoomOut = new MenuItem(words.get(19), new MenuShortcut(KeyEvent.VK_MINUS));
         zoomOut.setActionCommand("ZOOM_OUT");
         viewMenu.add(zoomOut);
-        MenuItem zoomReset = new MenuItem("Reset zoom", new MenuShortcut(KeyEvent.VK_NUMPAD0));
+        MenuItem zoomReset = new MenuItem(words.get(20), new MenuShortcut(KeyEvent.VK_NUMPAD0));
         zoomReset.setActionCommand("ZOOM_RESET");
         viewMenu.add(zoomReset);
 
         /* Help Menu Tab */
         helpMenu.addActionListener(this);
-        MenuItem shortcut = new MenuItem("Shortcuts");
+        MenuItem help = new MenuItem(words.get(4));
+        help.setActionCommand("HELP");
+        helpMenu.add(help);
+        MenuItem errorCodes = new MenuItem(words.get(21));
+        errorCodes.setActionCommand("ERROR_CODES");
+        helpMenu.add(errorCodes);
+        MenuItem shortcut = new MenuItem(words.get(22));
         shortcut.setActionCommand("SHORTCUTS");
         helpMenu.add(shortcut);
-        MenuItem githubLink = new MenuItem("Github Repository");
+        helpMenu.addSeparator();
+        MenuItem githubLink = new MenuItem(words.get(23));
         githubLink.setActionCommand("GITHUB_LINK");
         helpMenu.add(githubLink);
 
@@ -139,90 +194,106 @@ public class PaintStoneAgeEdition extends PaintFrame {
         shapesToDraw = new Vector<>();
         selectedShapes = new Vector<>();
         controlRectangles = new Vector<>();
-        inputTxt = new Vector<>();
         lineColor = Color.BLACK;
         isSquare = false;
         thickness = 1;
         uiSideMenuSize = 20;
         cursor = new Cursor(Cursor.DEFAULT_CURSOR);
-        locationOnHardDrive = "C:/PaintAPP";
-        saved = false;
-        saveName = "";
+        saved = true;
+        optionNew = false;
+        optionOpen = false;
+        saveName = null;
+        d = getDialog(100);
 
-        if(!new File(locationOnHardDrive).exists()) {
-            if(!new File(locationOnHardDrive + "/saved").mkdirs()) {System.exit(1);}
-            try {
-                FileWriter fw = new FileWriter(locationOnHardDrive + "/.settings");
-                fw.write("!PAINTAPPSETTINGS\nLANG=EN-US");
-                fw.close();
-            } catch (IOException e) {System.exit(1);}
-        }
+        try {
+            this.setIconImage(ImageIO.read(new File("res/images/icon.png")));
+        } catch (IOException ignored) {}
 
-        paintUI = new DrawableUI();
         this.setCursor(cursor);
-        this.setVisible(true);
+        if(!fatalError) {this.setVisible(true);}
     }
 
-    public static void main(String[] args) {new PaintStoneAgeEdition();}
+    public static void main(String[] args) {
+        new PaintStoneAgeEdition();
+    }
 
     @Override
     public void paint(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        for(int i = 0; i < shapesToDraw.size(); i++) {shapesToDraw.get(i).draw(g2d, zoom, startX, startY);}
-        for(int i = 0; i < selectedShapes.size(); i++) {selectedShapes.get(i).drawSelected(g2d, zoom, startX, startY);}
-        if(selectedShapes.size() == 1) {
-            Point pA = selectedShapes.get(0).getPointA();
-            Point pB = selectedShapes.get(0).getPointB();
-            if(Math.min(pA.x, pB.x) == pA.x && Math.min(pA.y, pB.y) == pA.y) {
-                controlRectangles = new Vector<>();
-                controlRectangles.add(new DrawableRectangle(
-                        new Point(pA.x - 15, pA.y - 15), pA, Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(new Point(pB.x, pA.y - 15),
-                        new Point(pB.x + 15, pA.y), Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(new Point(pB.x, pB.y),
-                        new Point(pB.x + 15, pB.y + 15), Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(new Point(pA.x - 15, pB.y),
-                        new Point(pA.x, pB.y + 15), Color.RED, null, 1, true));
+        try {
+            Graphics2D g2d = (Graphics2D) g;
+            for(int i = 0; i < shapesToDraw.size(); i++) {shapesToDraw.get(i).draw(g2d, zoom, startX, startY);}
+            for(int i = 0; i < selectedShapes.size(); i++) {selectedShapes.get(i).drawSelected(g2d, zoom, startX, startY);}
+            if(selectedShapes.size() == 1) {
+                Point pA = selectedShapes.get(0).getPointA();
+                Point pB = selectedShapes.get(0).getPointB();
+                int size = (int) (15 / zoom);
+                if(Math.min(pA.x, pB.x) == pA.x && Math.min(pA.y, pB.y) == pA.y) {
+                    controlRectangles = new Vector<>();
+                    controlRectangles.add(new DrawableRectangle(
+                            new Point(pA.x - size, pA.y - size), pA, Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(new Point(pB.x, pA.y - size),
+                            new Point(pB.x + size, pA.y), Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(new Point(pB.x, pB.y),
+                            new Point(pB.x + size, pB.y + size), Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(new Point(pA.x - size, pB.y),
+                            new Point(pA.x, pB.y + size), Color.RED, null, 2, true));
+                }
+                if(Math.min(pA.x, pB.x) == pA.x && Math.min(pA.y, pB.y) == pB.y) {
+                    controlRectangles = new Vector<>();
+                    controlRectangles.add(new DrawableRectangle(new Point(pA.x - size, pB.y - size), new Point(pA.x, pB.y),
+                            Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(new Point(pB.x, pB.y - size), new Point(pB.x + size, pB.y),
+                            Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(new Point(pB.x, pA.y), new Point(pB.x + size, pA.y + size),
+                            Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(new Point(pA.x - size, pA.y), new Point(pA.x, pA.y + size),
+                            Color.RED, null, 2, true));
+                }
+                if(Math.min(pA.x, pB.x) == pB.x && Math.min(pA.y, pB.y) == pA.y) {
+                    controlRectangles = new Vector<>();
+                    controlRectangles.add(new DrawableRectangle(new Point(pB.x - size, pA.y - size), new Point(pB.x, pA.y),
+                            Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(new Point(pA.x, pA.y - size), new Point(pA.x + size, pA.y),
+                            Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(new Point(pA.x, pB.y), new Point(pA.x + size, pB.y + size),
+                            Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(new Point(pB.x - size, pB.y), new Point(pB.x, pB.y + size),
+                            Color.RED, null, 2, true));
+                }
+                if(Math.min(pA.x, pB.x) == pB.x && Math.min(pA.y, pB.y) == pB.y) {
+                    controlRectangles = new Vector<>();
+                    controlRectangles.add(new DrawableRectangle(new Point(pB.x - size, pB.y - size), pB,
+                            Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(new Point(pA.x, pB.y - size), new Point(pA.x + size, pB.y),
+                            Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(pA, new Point(pA.x + size, pA.y + size),
+                            Color.RED, null, 2, true));
+                    controlRectangles.add(new DrawableRectangle(new Point(pB.x - size, pA.y), new Point(pB.x, pA.y + size),
+                            Color.RED, null, 2, true));
+                }
             }
-            if(Math.min(pA.x, pB.x) == pA.x && Math.min(pA.y, pB.y) == pB.y) {
-                controlRectangles = new Vector<>();
-                controlRectangles.add(new DrawableRectangle(new Point(pA.x - 15, pB.y - 15), new Point(pA.x, pB.y),
-                        Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(new Point(pB.x, pB.y - 15), new Point(pB.x + 15, pB.y),
-                        Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(new Point(pB.x, pA.y), new Point(pB.x + 15, pA.y + 15),
-                        Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(new Point(pA.x - 15, pA.y), new Point(pA.x, pA.y + 15),
-                        Color.RED, null, 1, true));
-            }
-            if(Math.min(pA.x, pB.x) == pB.x && Math.min(pA.y, pB.y) == pA.y) {
-                controlRectangles = new Vector<>();
-                controlRectangles.add(new DrawableRectangle(new Point(pB.x - 15, pA.y - 15), new Point(pB.x, pA.y),
-                        Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(new Point(pA.x, pA.y - 15), new Point(pA.x + 15, pA.y),
-                        Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(new Point(pA.x, pB.y), new Point(pA.x + 15, pB.y + 15),
-                        Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(new Point(pB.x - 15, pB.y), new Point(pB.x, pB.y + 15),
-                        Color.RED, null, 1, true));
-            }
-            if(Math.min(pA.x, pB.x) == pB.x && Math.min(pA.y, pB.y) == pB.y) {
-                controlRectangles = new Vector<>();
-                controlRectangles.add(new DrawableRectangle(new Point(pB.x - 15, pB.y - 15), pB,
-                        Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(new Point(pA.x, pB.y - 15), new Point(pA.x + 15, pB.y),
-                        Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(pA, new Point(pA.x + 15, pA.y + 15),
-                        Color.RED, null, 1, true));
-                controlRectangles.add(new DrawableRectangle(new Point(pB.x - 15, pA.y), new Point(pB.x, pA.y + 15),
-                        Color.RED, null, 1, true));
-            }
+            for (int i = 0; i < controlRectangles.size(); i++) {controlRectangles.get(i).draw(g2d, zoom, startX, startY);}
+            if(previewShape != null) {previewShape.draw(g2d, zoom, startX, startY);}
+            paintUI.updateFgColor(lineColor);
+            paintUI.updateBgColor(fillColor);
+            paintUI.draw(g2d, zoom, startX, startY);
+        } catch(IOException e) {
+            this.setVisible(false);
+            fatalError = true;
+            exitCode = 106;
+            d = getDialogErrorCode(106, false);
+            d.setVisible(true);
         }
-        for (int i = 0; i < controlRectangles.size(); i++) {controlRectangles.get(i).draw(g2d, zoom, startX, startY);}
-        if(previewShape != null) {previewShape.draw(g2d, zoom, startX, startY);}
-        paintUI.updateFgColor(lineColor);
-        paintUI.updateBgColor(fillColor);
-        paintUI.draw(g2d, zoom, startX, startY);
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        if(saved) {
+            this.dispose();
+            System.exit(0);
+        }
+        d = getDialogSaveChanges();
+        d.setVisible(true);
     }
 
     @Override
@@ -241,19 +312,12 @@ public class PaintStoneAgeEdition extends PaintFrame {
             case KeyEvent.VK_CONTROL:
                 isSquare = true;
                 break;
-            case KeyEvent.VK_BACK_SPACE:
-                if(!inputTxt.isEmpty()) {inputTxt.remove(inputTxt.size() - 1);}
-                break;
-            case KeyEvent.VK_ENTER:
-                inputTxt = new Vector<>();
-                break;
             case KeyEvent.VK_DELETE:
                 selectedShapes = new Vector<>();
                 controlRectangles = new Vector<>();
                 repaint();
                 break;
             default:
-                if(Character.isDefined(e.getKeyChar())) {inputTxt.add(e.getKeyChar());}
                 break;
         }
     }
@@ -300,30 +364,48 @@ public class PaintStoneAgeEdition extends PaintFrame {
                     paintUI.updateSelectedOption(5);
                     repaint();
                 }
+                if (paintUI.uiOptionBox.get(6).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    drawMode = DrawMode.DRAW_TYPE_PENTAGON;
+                    paintUI.updateSelectedOption(6);
+                    repaint();
+                }
+                if (paintUI.uiOptionBox.get(7).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    drawMode = DrawMode.DRAW_TYPE_HEXAGON;
+                    paintUI.updateSelectedOption(7);
+                    repaint();
+                }
                 if(!selectedShapes.isEmpty() && drawMode != DrawMode.SELECT) {
                     shapesToDraw.addAll(selectedShapes);
                     selectedShapes = new Vector<>();
                     controlRectangles = new Vector<>();
                 }
-                if (paintUI.uiOptionBox.get(6).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                if (paintUI.uiOptionBox.get(8).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
                     thickness = 1;
                     for(int i = 0; i < selectedShapes.size(); i++) {selectedShapes.get(i).setThickness(thickness);}
                     repaint();
                 }
-                if (paintUI.uiOptionBox.get(7).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                if (paintUI.uiOptionBox.get(9).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
                     thickness = 2;
                     for(int i = 0; i < selectedShapes.size(); i++) {selectedShapes.get(i).setThickness(thickness);}
                     repaint();
                 }
-                if (paintUI.uiOptionBox.get(8).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                if (paintUI.uiOptionBox.get(10).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
                     thickness = 4;
                     for(int i = 0; i < selectedShapes.size(); i++) {selectedShapes.get(i).setThickness(thickness);}
                     repaint();
                 }
-                if (paintUI.uiOptionBox.get(9).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                if (paintUI.uiOptionBox.get(11).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
                     thickness = 8;
                     for(int i = 0; i < selectedShapes.size(); i++) {selectedShapes.get(i).setThickness(thickness);}
                     repaint();
+                }
+                if(paintUI.uiOptionBox.get(12).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    d = getDialogInputText(true, lineColor);
+                    d.setVisible(true);
+                }
+                if(paintUI.uiOptionBox.get(13).clickedAtBox(new Point(e.getPoint().x, e.getPoint().y - startY))) {
+                    d = getDialogInputText(false, fillColor);
+                    d.setVisible(true);
                 }
 
                 for (int i = 0; i < paintUI.uiOptionBox.size(); i++) {
@@ -348,11 +430,12 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 }
 
                 if(!controlRectangles.isEmpty()) {
-                    if(controlRectangles.get(0).cursorInRectangle(e.getPoint(), startX, startY)) {drawMode = DrawMode.RESIZE_NW;}
-                    else if(controlRectangles.get(1).cursorInRectangle(e.getPoint(), startX, startY)) {drawMode = DrawMode.RESIZE_NE;}
-                    else if(controlRectangles.get(2).cursorInRectangle(e.getPoint(), startX, startY)) {drawMode = DrawMode.RESIZE_SE;}
-                    else if(controlRectangles.get(3).cursorInRectangle(e.getPoint(), startX, startY)) {drawMode = DrawMode.RESIZE_SW;}
-                    startPoint = e.getPoint();
+                    Point point = new Point((int) (e.getPoint().x/zoom), (int) (e.getPoint().y/zoom));
+                    if(controlRectangles.get(0).cursorInRectangle(point, zoom, startX, startY)) {drawMode = DrawMode.RESIZE_NW;}
+                    else if(controlRectangles.get(1).cursorInRectangle(point, zoom, startX, startY)) {drawMode = DrawMode.RESIZE_NE;}
+                    else if(controlRectangles.get(2).cursorInRectangle(point, zoom, startX, startY)) {drawMode = DrawMode.RESIZE_SE;}
+                    else if(controlRectangles.get(3).cursorInRectangle(point, zoom, startX, startY)) {drawMode = DrawMode.RESIZE_SW;}
+                    startPoint = point;
                 }
             }
 
@@ -382,7 +465,8 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         drawMode = DrawMode.DRAW_TYPE_LINE;
                         previewShape = null;
                         if(!this.getTitle().contains("*")) {
-                            if(this.getTitle().equals(title)) {this.setTitle(title + saveName.concat(" - *"));}
+                            saved = false;
+                            if(this.getTitle().equals(title)) {this.setTitle(title + " - *");}
                             else {this.setTitle(title + saveName.concat("*"));}
                         }
                         break;
@@ -398,7 +482,8 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         drawMode = DrawMode.DRAW_TYPE_OVAL;
                         previewShape = null;
                         if(!this.getTitle().contains("*")) {
-                            if(this.getTitle().equals(title)) {this.setTitle(title + saveName.concat(" - *"));}
+                            saved = false;
+                            if(this.getTitle().equals(title)) {this.setTitle(title + " - *");}
                             else {this.setTitle(title + saveName.concat("*"));}
                         }
                         break;
@@ -414,7 +499,8 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         drawMode = DrawMode.DRAW_TYPE_RECTANGLE;
                         previewShape = null;
                         if(!this.getTitle().contains("*")) {
-                            if(this.getTitle().equals(title)) {this.setTitle(title + saveName.concat(" - *"));}
+                            saved = false;
+                            if(this.getTitle().equals(title)) {this.setTitle(title + " - *");}
                             else {this.setTitle(title + saveName.concat("*"));}
                         }
                         break;
@@ -430,7 +516,8 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         drawMode = DrawMode.DRAW_TYPE_ISOSCELES_TRIANGLE;
                         previewShape = null;
                         if(!this.getTitle().contains("*")) {
-                            if(this.getTitle().equals(title)) {this.setTitle(title + saveName.concat(" - *"));}
+                            saved = false;
+                            if(this.getTitle().equals(title)) {this.setTitle(title + " - *");}
                             else {this.setTitle(title + saveName.concat("*"));}
                         }
                         break;
@@ -446,7 +533,42 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         drawMode = DrawMode.DRAW_TYPE_RIGHT_TRIANGLE;
                         previewShape = null;
                         if(!this.getTitle().contains("*")) {
-                            if(this.getTitle().equals(title)) {this.setTitle(title + saveName.concat(" - *"));}
+                            saved = false;
+                            if(this.getTitle().equals(title)) {this.setTitle(title + " - *");}
+                            else {this.setTitle(title + saveName.concat("*"));}
+                        }
+                        break;
+                    case DRAW_TYPE_PENTAGON:
+                        if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                        startPoint = new Point((int)((e.getPoint().x - startX)/ zoom),
+                                (int)((e.getPoint().y -startY) / zoom));
+                        drawMode = DrawMode.DRAW_PENTAGON;
+                        break;
+                    case DRAW_PENTAGON:
+                        if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                        if(previewShape != null) {shapesToDraw.add(previewShape);}
+                        drawMode = DrawMode.DRAW_TYPE_PENTAGON;
+                        previewShape = null;
+                        if(!this.getTitle().contains("*")) {
+                            saved = false;
+                            if(this.getTitle().equals(title)) {this.setTitle(title + " - *");}
+                            else {this.setTitle(title + saveName.concat("*"));}
+                        }
+                        break;
+                    case DRAW_TYPE_HEXAGON:
+                        if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                        startPoint = new Point((int)((e.getPoint().x - startX)/ zoom),
+                                (int)((e.getPoint().y -startY) / zoom));
+                        drawMode = DrawMode.DRAW_HEXAGON;
+                        break;
+                    case DRAW_HEXAGON:
+                        if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                        if(previewShape != null) {shapesToDraw.add(previewShape);}
+                        drawMode = DrawMode.DRAW_TYPE_HEXAGON;
+                        previewShape = null;
+                        if(!this.getTitle().contains("*")) {
+                            saved = false;
+                            if(this.getTitle().equals(title)) {this.setTitle(title + " - *");}
                             else {this.setTitle(title + saveName.concat("*"));}
                         }
                         break;
@@ -470,17 +592,17 @@ public class PaintStoneAgeEdition extends PaintFrame {
         if((drawMode == DrawMode.SELECT || drawMode == DrawMode.RESIZE_NW || drawMode == DrawMode.RESIZE_NE
                 || drawMode == DrawMode.RESIZE_SE || drawMode == DrawMode.RESIZE_SW) && !selectedShapes.isEmpty()) {
             if(startPoint == null) {startPoint = new Point(0, 0);}
-             distX = e.getPoint().x - startPoint.x;
-             distY = e.getPoint().y - startPoint.y;
-             pA = selectedShapes.get(0).getPointA();
-             pB = selectedShapes.get(0).getPointB();
+            distX = (int) (e.getPoint().x/zoom - startPoint.x);
+            distY = (int) (e.getPoint().y/zoom - startPoint.y);
+            pA = selectedShapes.get(0).getPointA();
+            pB = selectedShapes.get(0).getPointB();
         }
         if(drawMode == DrawMode.SELECT && !selectedShapes.isEmpty()) {
             for (int i = 0; i < selectedShapes.size(); i++) {
                 selectedShapes.get(i).setPointA(new Point(selectedShapes.get(i).getPointA().x + distX, selectedShapes.get(i).getPointA().y + distY));
                 selectedShapes.get(i).setPointB(new Point(selectedShapes.get(i).getPointB().x + distX, selectedShapes.get(i).getPointB().y + distY));
             }
-            startPoint = e.getPoint();
+            startPoint = new Point((int) (e.getPoint().x/zoom), (int) (e.getPoint().y/zoom));
             repaint();
         }
         switch(drawMode) {
@@ -517,7 +639,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         selectedShapes.get(0).setPointB(new Point(pB.x + distX, pB.y + distY));
                     }
                 }
-                startPoint = e.getPoint();
+                startPoint = new Point((int) (e.getPoint().x/zoom), (int) (e.getPoint().y/zoom));
                 repaint();
                 break;
             case RESIZE_NE:
@@ -553,7 +675,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         selectedShapes.get(0).setPointB(new Point(pB.x, pB.y + distY));
                     }
                 }
-                startPoint = e.getPoint();
+                startPoint = new Point((int) (e.getPoint().x/zoom), (int) (e.getPoint().y/zoom));
                 repaint();
                 break;
             case RESIZE_SE:
@@ -589,7 +711,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         selectedShapes.get(0).setPointA(new Point(pA.x + distX, pA.y + distY));
                     }
                 }
-                startPoint = e.getPoint();
+                startPoint = new Point((int) (e.getPoint().x/zoom), (int) (e.getPoint().y/zoom));
                 repaint();
                 break;
             case RESIZE_SW:
@@ -629,7 +751,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         selectedShapes.get(0).setPointB(new Point(pB.x + distX, pB.y));
                     }
                 }
-                startPoint = e.getPoint();
+                startPoint = new Point((int) (e.getPoint().x/zoom), (int) (e.getPoint().y/zoom));
                 repaint();
                 break;
             default:
@@ -643,33 +765,34 @@ public class PaintStoneAgeEdition extends PaintFrame {
             case SELECT:
                 if(!selectedShapes.isEmpty()) {cursor = new Cursor(Cursor.MOVE_CURSOR);}
                 if(!controlRectangles.isEmpty()) {
-                    if(controlRectangles.get(0).cursorInRectangle(e.getPoint(), startX, startY)) {cursor = new Cursor(Cursor.NW_RESIZE_CURSOR);}
-                    else if(controlRectangles.get(1).cursorInRectangle(e.getPoint(), startX, startY)) {cursor = new Cursor(Cursor.NE_RESIZE_CURSOR);}
-                    else if(controlRectangles.get(2).cursorInRectangle(e.getPoint(), startX, startY)) {cursor = new Cursor(Cursor.SE_RESIZE_CURSOR);}
-                    else if(controlRectangles.get(3).cursorInRectangle(e.getPoint(), startX, startY)) {cursor = new Cursor(Cursor.SW_RESIZE_CURSOR);}
+                    Point point = new Point((int) (e.getPoint().x/zoom), (int) (e.getPoint().y/zoom));
+                    if(controlRectangles.get(0).cursorInRectangle(point, zoom, startX, startY)) {cursor = new Cursor(Cursor.NW_RESIZE_CURSOR);}
+                    else if(controlRectangles.get(1).cursorInRectangle(point, zoom, startX, startY)) {cursor = new Cursor(Cursor.NE_RESIZE_CURSOR);}
+                    else if(controlRectangles.get(2).cursorInRectangle(point, zoom, startX, startY)) {cursor = new Cursor(Cursor.SE_RESIZE_CURSOR);}
+                    else if(controlRectangles.get(3).cursorInRectangle(point,zoom, startX, startY)) {cursor = new Cursor(Cursor.SW_RESIZE_CURSOR);}
                 }
                 if(e.getPoint().x > DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {
                     cursor = new Cursor(Cursor.DEFAULT_CURSOR);
                 }
                 this.setCursor(cursor);
                 break;
-            case DRAW_LINE: // TODO: fix zoom
+            case DRAW_LINE:
                 if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
                 if(isSquare) {
-                    double distance = startPoint.x - e.getPoint().x;
-                    if(e.getPoint().x >= startPoint.x + startX) {
-                        if(e.getPoint().y <= startPoint.y + startY) {
+                    double distance = startPoint.x - e.getPoint().x/zoom;
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
                             previewShape = new DrawableLine(startPoint,
                                     new Point((int) (startPoint.x - distance), (int) (startPoint.y + distance)),
                                     lineColor, thickness, isSquare);
                         } else {
-                            previewShape = new DrawableLine(startPoint, new Point((int)((startPoint.x - distance)/ zoom),
-                                    (int)((startPoint.y - distance) / zoom)), lineColor, thickness, isSquare);
+                            previewShape = new DrawableLine(startPoint, new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), lineColor, thickness, isSquare);
                         }
                     } else {
-                        if(e.getPoint().y <= startPoint.y + startY) {
-                            previewShape = new DrawableLine(new Point((int)((startPoint.x - distance)/ zoom),
-                                    (int)((startPoint.y - distance)/ zoom)), startPoint,
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableLine(new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), startPoint,
                                     lineColor, thickness, isSquare);
                         } else {
                             previewShape = new DrawableLine(startPoint,
@@ -678,65 +801,65 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         }
                     }
                 } else {
-                    previewShape = new DrawableLine(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
-                            (int)((e.getPoint().y -startY) / zoom)), lineColor, thickness, isSquare);
+                    previewShape = new DrawableLine(startPoint, new Point((int) ((e.getPoint().x - startX)/zoom),
+                            (int) ((e.getPoint().y -startY)/zoom)), lineColor, thickness, isSquare);
                 }
                 repaint();
                 break;
-            case DRAW_OVAL: // TODO: fix zoom
+            case DRAW_OVAL:
                 if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
                 if(isSquare) {
-                    double distance = startPoint.x - e.getPoint().x;
-                    if(e.getPoint().x >= startPoint.x + startX) {
-                        if(e.getPoint().y <= startPoint.y + startY) {
-                            previewShape = new DrawableOval(new Point(startPoint.x, (int)((startPoint.y + distance))),
-                                    new Point((int)((startPoint.x - distance) / zoom), startPoint.y),
+                    double distance = startPoint.x - e.getPoint().x/zoom;
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableOval(new Point(startPoint.x, (int)(startPoint.y + distance)),
+                                    new Point((int)(startPoint.x - distance), startPoint.y),
                                     lineColor, fillColor, thickness, isSquare);
                         } else {
-                            previewShape = new DrawableOval(startPoint, new Point((int)((startPoint.x - distance)),
-                                    (int)((startPoint.y - distance) / zoom)), lineColor, fillColor, thickness, isSquare);
+                            previewShape = new DrawableOval(startPoint, new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), lineColor, fillColor, thickness, isSquare);
                         }
                     } else {
-                        if(e.getPoint().y <= startPoint.y + startY) {
-                            previewShape = new DrawableOval(new Point((int)((startPoint.x - distance)),
-                                    (int)((startPoint.y - distance))), startPoint,
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableOval(new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), startPoint,
                                     lineColor, fillColor, thickness, isSquare);
                         } else {
-                            previewShape = new DrawableOval(new Point((int)((startPoint.x - distance)), startPoint.y),
-                                    new Point(startPoint.x, (int)((startPoint.y + distance) / zoom)),
+                            previewShape = new DrawableOval(new Point((int)(startPoint.x - distance), startPoint.y),
+                                    new Point(startPoint.x, (int)(startPoint.y + distance)),
                                     lineColor, fillColor, thickness, isSquare);
                         }
                     }
                 } else {
-                    if(e.getPoint().x >= startPoint.x + startX) {
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
                         if(e.getPoint().y <= startPoint.y + startY) {
                             previewShape = new DrawableOval(new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
-                                    new Point((int)((e.getPoint().x - startX)/ zoom), startPoint.y),
+                                    new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
                                     lineColor, fillColor, thickness, isSquare);
                         } else {
-                            previewShape = new DrawableOval(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                            previewShape = new DrawableOval(startPoint, new Point((int)((e.getPoint().x - startX) / zoom),
                                     (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare);
                         }
                     } else {
-                        if(e.getPoint().y <= startPoint.y + startY) {
-                            previewShape = new DrawableOval(new Point((int)((e.getPoint().x - startX)/ zoom),
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableOval(new Point((int)((e.getPoint().x - startX) / zoom),
                                     (int)((e.getPoint().y - startY) / zoom)),
                                     startPoint, lineColor, fillColor, thickness, isSquare);
                         } else {
                             previewShape = new DrawableOval(new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
-                                    new Point(startPoint.x, (int)((e.getPoint().y - startY)/ zoom)),
+                                    new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
                                     lineColor, fillColor, thickness, isSquare);
                         }
                     }
                 }
                 repaint();
                 break;
-            case DRAW_RECTANGLE: // TODO: fix zoom
+            case DRAW_RECTANGLE:
                 if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
                 if(isSquare) {
-                    double distance = startPoint.x - e.getPoint().x;
-                    if(e.getPoint().x >= startPoint.x + startX) {
-                        if(e.getPoint().y <= startPoint.y + startY) {
+                    double distance = startPoint.x - e.getPoint().x/zoom;
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
                             previewShape = new DrawableRectangle(new Point(startPoint.x, (int)((startPoint.y + distance))),
                                     new Point((int)((startPoint.x - distance)), startPoint.y),
                                     lineColor, fillColor, thickness, isSquare);
@@ -745,55 +868,55 @@ public class PaintStoneAgeEdition extends PaintFrame {
                                     (int)((startPoint.y - distance))), lineColor, fillColor, thickness, isSquare);
                         }
                     } else {
-                        if(e.getPoint().y <= startPoint.y + startY) {
-                            previewShape = new DrawableRectangle(new Point((int)((startPoint.x - distance)),
-                                    (int)((startPoint.y - distance)/ zoom)), startPoint,
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableRectangle(new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), startPoint,
                                     lineColor, fillColor, thickness, isSquare);
                         } else {
-                            previewShape = new DrawableRectangle(new Point((int)((startPoint.x - distance)), startPoint.y),
-                                    new Point(startPoint.x, (int)((startPoint.y + distance))),
+                            previewShape = new DrawableRectangle(new Point((int)(startPoint.x - distance), startPoint.y),
+                                    new Point(startPoint.x, (int)(startPoint.y + distance)),
                                     lineColor, fillColor, thickness, isSquare);
                         }
                     }
                 } else {
-                    if(e.getPoint().x >= startPoint.x + startX) {
-                        if(e.getPoint().y <= startPoint.y + startY) {
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
                             previewShape = new DrawableRectangle(new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
-                                    new Point((int)((e.getPoint().x - startX)/ zoom), startPoint.y),
+                                    new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
                                     lineColor, fillColor, thickness, isSquare);
                         } else {
-                            previewShape = new DrawableRectangle(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                            previewShape = new DrawableRectangle(startPoint, new Point((int)((e.getPoint().x - startX) / zoom),
                                     (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare);
                         }
                     } else {
-                        if(e.getPoint().y <= startPoint.y + startY) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
                             previewShape = new DrawableRectangle(new Point((int)((e.getPoint().x - startX)/ zoom),
                                     (int)((e.getPoint().y - startY) / zoom)),
                                     startPoint, lineColor, fillColor, thickness, isSquare);
                         } else {
                             previewShape = new DrawableRectangle(new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
-                                    new Point(startPoint.x, (int)((e.getPoint().y - startY)/ zoom)),
+                                    new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
                                     lineColor, fillColor, thickness, isSquare);
                         }
                     }
                 }
                 repaint();
                 break;
-            case DRAW_ISOSCELES_TRIANGLE: // TODO: fix zoom
+            case DRAW_ISOSCELES_TRIANGLE:
                 if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
                 if(isSquare) {
-                    double distance = startPoint.x - e.getPoint().x;
-                    if(e.getPoint().x >= startPoint.x + startX) {
-                        if(e.getPoint().y <= startPoint.y + startY) {
-                            previewShape = new DrawableIsoscelesTriangle(new Point(startPoint.x, (int)((startPoint.y + distance))),
-                                    new Point((int)((startPoint.x - distance) / zoom), startPoint.y),
+                    double distance = startPoint.x - e.getPoint().x/zoom;
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableIsoscelesTriangle(new Point(startPoint.x, (int)(startPoint.y + distance)),
+                                    new Point((int)(startPoint.x - distance), startPoint.y),
                                     lineColor, fillColor, thickness, isSquare);
                         } else {
-                            previewShape = new DrawableIsoscelesTriangle(startPoint, new Point((int)((startPoint.x - distance)),
-                                    (int)((startPoint.y - distance) / zoom)), lineColor, fillColor, thickness, isSquare);
+                            previewShape = new DrawableIsoscelesTriangle(startPoint, new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), lineColor, fillColor, thickness, isSquare);
                         }
                     } else {
-                        if(e.getPoint().y <= startPoint.y + startY) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
                             previewShape = new DrawableIsoscelesTriangle(new Point((int)((startPoint.x - distance)),
                                     (int)((startPoint.y - distance))), startPoint,
                                     lineColor, fillColor, thickness, isSquare);
@@ -804,71 +927,167 @@ public class PaintStoneAgeEdition extends PaintFrame {
                         }
                     }
                 } else {
-                    if(e.getPoint().x >= startPoint.x + startX) {
-                        if(e.getPoint().y <= startPoint.y + startY) {
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
                             previewShape = new DrawableIsoscelesTriangle(new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
-                                    new Point((int)((e.getPoint().x - startX)/ zoom), startPoint.y),
+                                    new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
                                     lineColor, fillColor, thickness, isSquare);
                         } else {
-                            previewShape = new DrawableIsoscelesTriangle(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                            previewShape = new DrawableIsoscelesTriangle(startPoint, new Point((int)((e.getPoint().x - startX) / zoom),
                                     (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare);
                         }
                     } else {
-                        if(e.getPoint().y <= startPoint.y + startY) {
-                            previewShape = new DrawableIsoscelesTriangle(new Point((int)((e.getPoint().x - startX)/ zoom),
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableIsoscelesTriangle(new Point((int)((e.getPoint().x - startX) / zoom),
                                     (int)((e.getPoint().y - startY) / zoom)),
                                     startPoint, lineColor, fillColor, thickness, isSquare);
                         } else {
                             previewShape = new DrawableIsoscelesTriangle(new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
-                                    new Point(startPoint.x, (int)((e.getPoint().y - startY)/ zoom)),
+                                    new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
                                     lineColor, fillColor, thickness, isSquare);
                         }
                     }
                 }
                 repaint();
                 break;
-            case DRAW_RIGHT_TRIANGLE: // TODO: fix zoom
+            case DRAW_RIGHT_TRIANGLE:
                 if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
                 if(isSquare) {
-                    double distance = startPoint.x - e.getPoint().x;
-                    if(e.getPoint().x >= startPoint.x + startX) {
-                        if(e.getPoint().y <= startPoint.y + startY) {
-                            previewShape = new DrawableRightTriangle(new Point(startPoint.x, (int)((startPoint.y + distance))),
-                                    new Point((int)((startPoint.x - distance) / zoom), startPoint.y),
+                    double distance = startPoint.x - e.getPoint().x/zoom;
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableRightTriangle(new Point(startPoint.x, (int)(startPoint.y + distance)),
+                                    new Point((int)(startPoint.x - distance), startPoint.y),
                                     lineColor, fillColor, thickness, isSquare);
                         } else {
-                            previewShape = new DrawableRightTriangle(startPoint, new Point((int)((startPoint.x - distance)),
-                                    (int)((startPoint.y - distance) / zoom)), lineColor, fillColor, thickness, isSquare);
+                            previewShape = new DrawableRightTriangle(startPoint, new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), lineColor, fillColor, thickness, isSquare);
                         }
                     } else {
-                        if(e.getPoint().y <= startPoint.y + startY) {
-                            previewShape = new DrawableRightTriangle(new Point((int)((startPoint.x - distance)),
-                                    (int)((startPoint.y - distance))), startPoint,
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableRightTriangle(new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), startPoint,
                                     lineColor, fillColor, thickness, isSquare);
                         } else {
-                            previewShape = new DrawableRightTriangle(new Point((int)((startPoint.x - distance)), startPoint.y),
-                                    new Point(startPoint.x, (int)((startPoint.y + distance) / zoom)),
+                            previewShape = new DrawableRightTriangle(new Point((int)(startPoint.x - distance), startPoint.y),
+                                    new Point(startPoint.x, (int)(startPoint.y + distance)),
                                     lineColor, fillColor, thickness, isSquare);
                         }
                     }
                 } else {
-                    if(e.getPoint().x >= startPoint.x + startX) {
-                        if(e.getPoint().y <= startPoint.y + startY) {
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
                             previewShape = new DrawableRightTriangle(new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
-                                    new Point((int)((e.getPoint().x - startX)/ zoom), startPoint.y),
+                                    new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
                                     lineColor, fillColor, thickness, isSquare);
                         } else {
-                            previewShape = new DrawableRightTriangle(startPoint, new Point((int)((e.getPoint().x - startX)/ zoom),
+                            previewShape = new DrawableRightTriangle(startPoint, new Point((int)((e.getPoint().x - startX) / zoom),
                                     (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare);
                         }
                     } else {
-                        if(e.getPoint().y <= startPoint.y + startY) {
-                            previewShape = new DrawableRightTriangle(new Point((int)((e.getPoint().x - startX)/ zoom),
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableRightTriangle(new Point((int)((e.getPoint().x - startX) / zoom),
                                     (int)((e.getPoint().y - startY) / zoom)),
                                     startPoint, lineColor, fillColor, thickness, isSquare);
                         } else {
                             previewShape = new DrawableRightTriangle(new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
-                                    new Point(startPoint.x, (int)((e.getPoint().y - startY)/ zoom)),
+                                    new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
+                                    lineColor, fillColor, thickness, isSquare);
+                        }
+                    }
+                }
+                repaint();
+                break;
+            case DRAW_PENTAGON:
+                if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                if(isSquare) {
+                    double distance = startPoint.x - e.getPoint().x/zoom;
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawablePentagon(new Point(startPoint.x, (int)(startPoint.y + distance)),
+                                    new Point((int)(startPoint.x - distance), startPoint.y),
+                                    lineColor, fillColor, thickness, isSquare);
+                        } else {
+                            previewShape = new DrawablePentagon(startPoint, new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), lineColor, fillColor, thickness, isSquare);
+                        }
+                    } else {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawablePentagon(new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), startPoint,
+                                    lineColor, fillColor, thickness, isSquare);
+                        } else {
+                            previewShape = new DrawablePentagon(new Point((int)(startPoint.x - distance), startPoint.y),
+                                    new Point(startPoint.x, (int)(startPoint.y + distance)),
+                                    lineColor, fillColor, thickness, isSquare);
+                        }
+                    }
+                } else {
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawablePentagon(new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
+                                    new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
+                                    lineColor, fillColor, thickness, isSquare);
+                        } else {
+                            previewShape = new DrawablePentagon(startPoint, new Point((int)((e.getPoint().x - startX) / zoom),
+                                    (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare);
+                        }
+                    } else {
+                        if(e.getPoint().y <= startPoint.y + startY) {
+                            previewShape = new DrawablePentagon(new Point((int)((e.getPoint().x - startX) / zoom),
+                                    (int)((e.getPoint().y - startY) / zoom)),
+                                    startPoint, lineColor, fillColor, thickness, isSquare);
+                        } else {
+                            previewShape = new DrawablePentagon(new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
+                                    new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
+                                    lineColor, fillColor, thickness, isSquare);
+                        }
+                    }
+                }
+                repaint();
+                break;
+            case DRAW_HEXAGON:
+                if(e.getPoint().x >= DrawableUI.frameWidth - paintUI.getUiSideMenuSize()) {break;}
+                if(isSquare) {
+                    double distance = startPoint.x - e.getPoint().x/zoom;
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableHexagon(new Point(startPoint.x, (int)(startPoint.y + distance)),
+                                    new Point((int)(startPoint.x - distance), startPoint.y),
+                                    lineColor, fillColor, thickness, isSquare);
+                        } else {
+                            previewShape = new DrawableHexagon(startPoint, new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), lineColor, fillColor, thickness, isSquare);
+                        }
+                    } else {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableHexagon(new Point((int)(startPoint.x - distance),
+                                    (int)(startPoint.y - distance)), startPoint,
+                                    lineColor, fillColor, thickness, isSquare);
+                        } else {
+                            previewShape = new DrawableHexagon(new Point((int)(startPoint.x - distance), startPoint.y),
+                                    new Point(startPoint.x, (int)(startPoint.y + distance)),
+                                    lineColor, fillColor, thickness, isSquare);
+                        }
+                    }
+                } else {
+                    if(e.getPoint().x >= startPoint.x * zoom + startX) {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableHexagon(new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
+                                    new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
+                                    lineColor, fillColor, thickness, isSquare);
+                        } else {
+                            previewShape = new DrawableHexagon(startPoint, new Point((int)((e.getPoint().x - startX) / zoom),
+                                    (int)((e.getPoint().y -startY) / zoom)), lineColor, fillColor, thickness, isSquare);
+                        }
+                    } else {
+                        if(e.getPoint().y <= startPoint.y * zoom + startY) {
+                            previewShape = new DrawableHexagon(new Point((int)((e.getPoint().x - startX) / zoom),
+                                    (int)((e.getPoint().y - startY) / zoom)),
+                                    startPoint, lineColor, fillColor, thickness, isSquare);
+                        } else {
+                            previewShape = new DrawableHexagon(new Point((int)((e.getPoint().x - startX) / zoom), startPoint.y),
+                                    new Point(startPoint.x, (int)((e.getPoint().y - startY) / zoom)),
                                     lineColor, fillColor, thickness, isSquare);
                         }
                     }
@@ -891,85 +1110,100 @@ public class PaintStoneAgeEdition extends PaintFrame {
     @Override
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()) {
+            case "SAVE":
+                saveFile();
+                d.dispose();
+                if(optionNew) {
+                    newFile();
+                    optionNew = false;
+                }
+                if(optionOpen) {
+                    newFile();
+                    optionOpen = false;
+                }
+                else {
+                    this.dispose();
+                    System.exit(0);
+                }
+                break;
+            case "DISCARD":
+                d.dispose();
+                if(optionNew) {
+                    newFile();
+                    optionNew = false;
+                }
+                if(optionOpen) {
+                    openFile();
+                    optionOpen = false;
+                }
+                else {
+                    this.dispose();
+                    System.exit(0);
+                }
+                break;
+            case "YES":
+                d.dispose();
+                this.dispose();
+                new PaintStoneAgeEdition();
+                break;
+            case "DO_NOTHING":
+                d.dispose();
+                break;
+
+
             case "NEW_FILE":
-                saved = false;
-                saveName = "";
-                shapesToDraw = new Vector<>();
-                selectedShapes = new Vector<>();
-                controlRectangles = new Vector<>();
-                paintUI.updateSelectedOption(-1);
-                cursor = new Cursor(Cursor.DEFAULT_CURSOR);
-                this.setCursor(cursor);
-                thickness = 1;
-                lineColor = Color.BLACK;
-                fillColor = null;
-                drawMode = DrawMode.DEFAULT;
-                this.setTitle(title);
+                if(!saved) {
+                    optionNew = true;
+                    d = getDialogSaveChanges();
+                    d.setVisible(true);
+                } else {newFile();}
                 break;
             case "OPEN_FILE":
-                try {
-                    BufferedReader reader = new BufferedReader(new FileReader("C:/PaintAPP/saved/untitled.paint"));
-                    String dataLine;
-                    while((dataLine = reader.readLine()) != null) {shapesToDraw.addAll(convertStringToShapes(dataLine));}
-                    reader.close();
-                    saved = true;
-                    saveName = saveName.replace("*", "");
-                } catch (IOException ex) {}
+                if(!saved) {
+                    optionOpen = true;
+                    d = getDialogSaveChanges();
+                    d.setVisible(true);
+                } else {openFile();}
                 break;
             case "SAVE_FILE":
-                if(saved) {
-                    shapesToDraw.addAll(selectedShapes);
-                    selectedShapes = new Vector<>();
-                    controlRectangles = new Vector<>();
-                    try {
-                        FileWriter writer = new FileWriter(saveName);
-                        String[] dataLines = convertShapesToStringArray(shapesToDraw);
-                        for(int i = 0; i < dataLines.length; i++) {
-                            writer.write(dataLines[i] + "\n");
-                        }
-                        writer.close();
-                        saved = true;
-                        saveName = saveName.replace("*", "");
-                    } catch (IOException ex) {}
-                    this.setTitle(title + saveName);
-                }
+                saveFile();
+                break;
             case "SAVE_FILE_AS":
-                saveName = "C:/PaintAPP/saved/untitled.paint";
-                shapesToDraw.addAll(selectedShapes);
-                selectedShapes = new Vector<>();
-                controlRectangles = new Vector<>();
-                try {
-                    FileWriter writer = new FileWriter(saveName);
-                    String[] dataLines = convertShapesToStringArray(shapesToDraw);
-                    for(int i = 0; i < dataLines.length; i++) {
-                        writer.write(dataLines[i] + "\n");
-                    }
-                    writer.close();
-                    saved = true;
-                    saveName = " - ".concat(saveName);
-                } catch (IOException ex) {saveName = "";}
-                this.setTitle(title + saveName);
+                saveName = null;
+                saveFile();
                 break;
             case "DE-AT":
                 try {
-                    FileWriter writer = new FileWriter(locationOnHardDrive + "/.settings");
-                    writer.write("!PAINTAPPSETTINGS\nLANG=DE-AT");
+                    if(!new File("res/lang/de-at").exists()) {throw new IOException();}
+
+                    FileWriter writer = new FileWriter(settingsPath);
+                    writer.write("!PAINT_APP_SETTINGS\nLANG=de-at\nNUM_OF_WORDS=44");
                     writer.close();
-                } catch (IOException ex) {break;}
-                this.dispose();
-                new PaintStoneAgeEdition();
+                } catch (IOException ex) {
+                    d = getDialogErrorCode(300, true);
+                    d.setVisible(true);
+                    break;
+                }
+                d = getDialogRestart();
+                d.setVisible(true);
                 break;
             case "EN-US":
                 try {
-                    FileWriter writer = new FileWriter(locationOnHardDrive + "/.settings");
-                    writer.write("!PAINTAPPSETTINGS\nLANG=EN-US");
+                    if(!new File("res/lang/en-us").exists()) {throw new IOException();}
+
+                    FileWriter writer = new FileWriter(settingsPath);
+                    writer.write("!PAINT_APP_SETTINGS\nLANG=en-us\nNUM_OF_WORDS=44");
                     writer.close();
-                } catch (IOException ex) {break;}
-                this.dispose();
-                new PaintStoneAgeEdition();
+                } catch (IOException ex) {
+                    d = getDialogErrorCode(301, true);
+                    d.setVisible(true);
+                    break;
+                }
+                d = getDialogRestart();
+                d.setVisible(true);
                 break;
             case "EXIT":
-                System.exit(0);
+                System.exit(exitCode);
                 break;
             case "CUT":
                 Clipboard cp_cut = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -980,10 +1214,12 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 break;
             case "COPY":
                 Clipboard cp_copy = Toolkit.getDefaultToolkit().getSystemClipboard();
+                System.out.println(selectedShapes.get(selectedShapes.size()-1));
                 StringSelection stringSelection_copy = new StringSelection(convertShapesToString(selectedShapes));
                 cp_copy.setContents(stringSelection_copy, null);
                 break;
             case "PASTE":
+                drawMode = DrawMode.SELECT;
                 shapesToDraw.addAll(selectedShapes);
                 selectedShapes = new Vector<>();
                 controlRectangles = new Vector<>();
@@ -991,13 +1227,23 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 String content = "";
                 try {
                     content = (String) cp_paste.getData(DataFlavor.stringFlavor);
-                } catch (Exception ex) {}
+                } catch (Exception ignored) {}
                 Vector<DrawableTypes> shapes = convertStringToShapes(content);
                 for(int i = 0; i < shapes.size(); i++) {
-                    shapes.get(i).setPointA(new Point(shapes.get(i).getPointA().x + 10, shapes.get(i).getPointA().y));
-                    shapes.get(i).setPointB(new Point(shapes.get(i).getPointB().x + 10, shapes.get(i).getPointB().y));
+                    if(!shapesToDraw.isEmpty()) {
+                        shapes.get(i).setPointA(new Point(shapesToDraw.lastElement().getPointA().x + 10 * i + 10,
+                                shapesToDraw.lastElement().getPointA().y + 10 * i + 10));
+                        shapes.get(i).setPointB(new Point(shapesToDraw.lastElement().getPointB().x + 10 * i + 10,
+                                shapesToDraw.lastElement().getPointB().y + 10 * i + 10));
+                    } else {
+                        shapes.get(i).setPointA(new Point(shapes.get(i).getPointA().x + 10 * i + 10,
+                                shapes.get(i).getPointA().y + 10 * i + 10));
+                        shapes.get(i).setPointB(new Point(shapes.get(i).getPointB().x + 10 * i + 10,
+                                shapes.get(i).getPointB().y + 10 * i + 10));
+                    }
                 }
-                selectedShapes = shapes;
+                selectedShapes = new Vector<>();
+                selectedShapes.addAll(shapes);
                 break;
             case "DELETE_ITEM":
                 selectedShapes = new Vector<>();
@@ -1029,21 +1275,255 @@ public class PaintStoneAgeEdition extends PaintFrame {
             case "ZOOM_RESET":
                 zoom = 1d;
                 break;
+            case "HELP":
+                try {
+                    String path = new java.io.File("res/web/" + lang + "/help.html").getCanonicalPath();
+                    Desktop.getDesktop().browse(new URL("file://" + path).toURI());}
+                catch (Exception ex) {
+                    d = getDialogErrorCode(200, true);
+                    d.setVisible(true);
+                }
+                break;
+            case "ERROR_CODES":
+                try {
+                    String path = new java.io.File("res/web/" + lang + "/error_codes.html").getCanonicalPath();
+                    Desktop.getDesktop().browse(new URL("file://" + path).toURI());}
+                catch (Exception ex) {
+                    d = getDialogErrorCode(201, true);
+                    d.setVisible(true);
+                }
+                break;
             case "SHORTCUTS":
                 try {
-                    String path = new java.io.File("res/web/en-us/shortcuts.html").getCanonicalPath();
+                    String path = new java.io.File("res/web/" + lang + "/shortcuts.html").getCanonicalPath();
                     Desktop.getDesktop().browse(new URL("file://" + path).toURI());}
-                catch (Exception ex) {System.out.println(ex.getMessage());}
+                catch (Exception ex) {
+                    d = getDialogErrorCode(202, true);
+                    d.setVisible(true);
+                }
                 break;
             case "GITHUB_LINK":
                 try {
                     String url = "https://github.com/ArminSchauer/PaintStoneAgeEdition";
                     Desktop.getDesktop().browse(new URL(url).toURI());
                 }
-                catch (Exception ex) {System.out.println(ex.getMessage());}
+                catch (Exception ex) {
+                    d = getDialogErrorCode(203, true);
+                    d.setVisible(true);
+                }
                 break;
         }
         repaint();
+    }
+
+    private Dialog getDialogSaveChanges() {
+        Dialog d = getDialog(100);
+
+        Panel p = new Panel(new BorderLayout());
+        Panel pButtons = new Panel(new FlowLayout());
+
+        Button bSave = new Button(words.get(9));
+        bSave.addActionListener(this);
+        bSave.setActionCommand("SAVE");
+
+        Button bDiscard = new Button(words.get(28));
+        bDiscard.addActionListener(this);
+        bDiscard.setActionCommand("DISCARD");
+
+        Button bCancel = new Button(words.get(29));
+        bCancel.addActionListener(this);
+        bCancel.setActionCommand("DO_NOTHING");
+
+        Label textSaveChanges = new Label(words.get(30));
+        textSaveChanges.setAlignment(Label.CENTER);
+        textSaveChanges.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+
+        p.add(textSaveChanges, BorderLayout.NORTH);
+        pButtons.add(bSave);
+        pButtons.add(bDiscard);
+        pButtons.add(bCancel);
+        p.add(pButtons, BorderLayout.SOUTH);
+
+        d.add(p);
+        return d;
+    }
+
+    private Dialog getDialogRestart() {
+        Dialog d = getDialog(100);
+
+        Panel p = new Panel(new BorderLayout());
+        Panel pButtons = new Panel(new FlowLayout());
+
+        Button bYes = new Button(words.get(31));
+        bYes.addActionListener(this);
+        bYes.setActionCommand("YES");
+
+        Button bNo = new Button(words.get(32));
+        bNo.addActionListener(this);
+        bNo.setActionCommand("DO_NOTHING");
+
+        Label textRestart = new Label(words.get(33));
+        textRestart.setAlignment(Label.CENTER);
+        textRestart.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+
+        p.add(textRestart, BorderLayout.NORTH);
+        pButtons.add(bYes);
+        pButtons.add(bNo);
+        p.add(pButtons, BorderLayout.SOUTH);
+
+        d.add(p);
+        return d;
+    }
+
+    private Dialog getDialogInputText(boolean isForegroundColor, Color currentColor) {
+        Dialog d = getDialog(150);
+
+        Panel p = new Panel(new BorderLayout());
+        Panel pTxt = new Panel(new BorderLayout());
+        Panel pTxtField = new Panel();
+        Panel pButtons = new Panel(new FlowLayout());
+
+        Label textInputText = new Label();
+        if(isForegroundColor) {textInputText.setText(words.get(34));}
+        else {textInputText.setText(words.get(35));}
+        textInputText.setAlignment(Label.CENTER);
+        textInputText.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
+
+        Label textCurrentColor = new Label(words.get(36) + " " +  colorToHexString(currentColor));
+        textCurrentColor.setAlignment(Label.CENTER);
+        textCurrentColor.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
+
+        pTxt.add(textInputText, BorderLayout.NORTH);
+        pTxt.add(textCurrentColor, BorderLayout.CENTER);
+
+        Label txt = new Label(words.get(37));
+        txt.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        TextField txtField = new TextField("", 4);
+
+        pTxtField.add(txt);
+        pTxtField.add(txtField);
+
+        Button bApply = new Button(words.get(38));
+        bApply.addActionListener(this);
+        bApply.setActionCommand("APPLY");
+        bApply.addActionListener(e -> {
+            if(isForegroundColor) {
+                lineColor = hexStringToColor(txtField.getText());
+                for(int i = 0; i < selectedShapes.size(); i++) {selectedShapes.get(i).setLineColor(lineColor);}
+            }
+            else {
+                fillColor = hexStringToColor(txtField.getText());
+                for(int i = 0; i < selectedShapes.size(); i++) {selectedShapes.get(i).setLineColor(fillColor);}
+            }
+            repaint();
+            d.dispose();
+        });
+
+        Button bNo = new Button(words.get(29));
+        bNo.addActionListener(this);
+        bNo.setActionCommand("DO_NOTHING");
+
+        p.add(pTxt, BorderLayout.NORTH);
+        p.add(pTxtField, BorderLayout.CENTER);
+        pButtons.add(bApply);
+        pButtons.add(bNo);
+        p.add(pButtons, BorderLayout.SOUTH);
+
+        d.add(p);
+        return d;
+    }
+
+    private Dialog getDialogInformation(String information) {
+        Dialog d = getDialog(100);
+
+        Panel p = new Panel(new BorderLayout());
+        Panel pButtons = new Panel(new FlowLayout());
+
+        Button bOk = new Button(words.get(39));
+        bOk.addActionListener(this);
+        bOk.setActionCommand("DO_NOTHING");
+
+        Label textInformation = new Label(information);
+        textInformation.setAlignment(Label.CENTER);
+        textInformation.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+
+        p.add(textInformation, BorderLayout.NORTH);
+        pButtons.add(bOk);
+        p.add(pButtons, BorderLayout.SOUTH);
+
+        d.add(p);
+        return d;
+    }
+
+    private Dialog getDialogErrorCode(int errorCode, boolean dontClose) {
+        Dialog d = getDialog(100);
+
+        Panel p = new Panel(new BorderLayout());
+        Panel pButtons = new Panel(new FlowLayout());
+
+        Button bOk = new Button(words.get(39));
+        bOk.addActionListener(this);
+        if(dontClose) {bOk.setActionCommand("DO_NOTHING");}
+        else {bOk.setActionCommand("EXIT");}
+
+        Label textErrorCode = new Label(words.get(43) + " " + errorCode);
+        textErrorCode.setAlignment(Label.CENTER);
+        textErrorCode.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+
+        p.add(textErrorCode, BorderLayout.NORTH);
+        pButtons.add(bOk);
+        p.add(pButtons, BorderLayout.SOUTH);
+
+        d.add(p);
+        return d;
+    }
+
+    private Dialog getDialog(int height) {
+        Dialog d = new Dialog(this, title);
+        d.addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {}
+            @Override
+            public void windowClosing(WindowEvent e) {}
+            @Override public void windowClosed(WindowEvent e) {}
+            @Override
+            public void windowIconified(WindowEvent e) {}
+            @Override
+            public void windowDeiconified(WindowEvent e) {}
+            @Override
+            public void windowActivated(WindowEvent e) {}
+            @Override
+            public void windowDeactivated(WindowEvent e) {d.toFront();}
+        });
+        d.setResizable(false);
+        d.setAlwaysOnTop(true);
+        d.setLocation(500, 200);
+        d.setSize(400, height);
+        return d;
+    }
+
+    public String colorToHexString(Color c) {
+        if(c == null) {return "Transparent";}
+
+        String r = Integer.toHexString(c.getRed());
+        String g = Integer.toHexString(c.getGreen());
+        String b = Integer.toHexString(c.getBlue());
+
+        if(r.toCharArray().length == 1) {r = "0".concat(r);}
+        if(g.toCharArray().length == 1) {g = "0".concat(g);}
+        if(b.toCharArray().length == 1) {b = "0".concat(b);}
+
+        return "#" + r.toLowerCase() + g.toLowerCase() + b.toLowerCase();
+    }
+
+    public Color hexStringToColor(String hexString) {
+        char[] hexStringCharArray = hexString.replace("#", "").toCharArray();
+
+        int r = HexFormat.fromHexDigit(hexStringCharArray[0]) * 16 + HexFormat.fromHexDigit(hexStringCharArray[1]);
+        int g = HexFormat.fromHexDigit(hexStringCharArray[2]) * 16 + HexFormat.fromHexDigit(hexStringCharArray[3]);
+        int b = HexFormat.fromHexDigit(hexStringCharArray[4]) * 16 + HexFormat.fromHexDigit(hexStringCharArray[5]);
+
+        return new Color(r, g, b);
     }
 
     public static String convertShapesToString(Vector<DrawableTypes> shapes) {
@@ -1080,37 +1560,186 @@ public class PaintStoneAgeEdition extends PaintFrame {
 
     public static Vector<DrawableTypes> convertStringToShapes(String str) {
         Vector<DrawableTypes> returnVector = new Vector<>();
-        String[] shapesAsStr = str.split(":");
 
-        for(int i = 0; i < shapesAsStr.length; i++) {
-            String[] args = shapesAsStr[i].split(";");
-            byte type = Byte.parseByte(args[2]);
-            Point a = new Point(Integer.parseInt(args[0].split(",")[0]), Integer.parseInt(args[0].split(",")[1]));
-            Point b = new Point(Integer.parseInt(args[1].split(",")[0]), Integer.parseInt(args[1].split(",")[1]));
-            Color fg = Color.getColor(args[3]);
-            Color bg = Color.getColor(args[4]);
-            int thickness = Integer.parseInt(args[5]);
-            boolean isSquare = Boolean.parseBoolean(args[6]);
+        try {
+            String[] shapesAsStr = str.split(":");
 
-            switch(type) {
-                case DrawableTypes.TYPE_LINE:
-                    returnVector.add(new DrawableLine(a, b, fg, thickness, isSquare));
-                    break;
-                case DrawableTypes.TYPE_RECTANGLE:
-                    returnVector.add(new DrawableRectangle(a, b, fg, bg, thickness, isSquare));
-                    break;
-                case DrawableTypes.TYPE_OVAL:
-                    returnVector.add(new DrawableOval(a, b, fg, bg, thickness, isSquare));
-                    break;
-                case DrawableTypes.TYPE_ISOSCELES_TRIANGLE:
-                    returnVector.add(new DrawableIsoscelesTriangle(a, b, fg, bg, thickness, isSquare));
-                    break;
-                case DrawableTypes.TYPE_RIGHT_TRIANGLE:
-                    returnVector.add(new DrawableRightTriangle(a, b, fg, bg, thickness, isSquare));
-                    break;
-                default:
-                    break;
+            for(int i = 0; i < shapesAsStr.length; i++) {
+                String[] args = shapesAsStr[i].split(";");
+                byte type = Byte.parseByte(args[2]);
+                Point a = new Point(Integer.parseInt(args[0].split(",")[0]), Integer.parseInt(args[0].split(",")[1]));
+                Point b = new Point(Integer.parseInt(args[1].split(",")[0]), Integer.parseInt(args[1].split(",")[1]));
+                Color fg = new Color(Integer.parseInt(args[3]));
+                Color bg = null;
+                if(!args[4].equals("null")) {bg = new Color(Integer.parseInt(args[4]));}
+                int thickness = Integer.parseInt(args[5]);
+                boolean isSquare = Boolean.parseBoolean(args[6]);
+
+                switch(type) {
+                    case DrawableTypes.TYPE_LINE:
+                        returnVector.add(new DrawableLine(a, b, fg, thickness, isSquare));
+                        break;
+                    case DrawableTypes.TYPE_RECTANGLE:
+                        returnVector.add(new DrawableRectangle(a, b, fg, bg, thickness, isSquare));
+                        break;
+                    case DrawableTypes.TYPE_OVAL:
+                        returnVector.add(new DrawableOval(a, b, fg, bg, thickness, isSquare));
+                        break;
+                    case DrawableTypes.TYPE_ISOSCELES_TRIANGLE:
+                        returnVector.add(new DrawableIsoscelesTriangle(a, b, fg, bg, thickness, isSquare));
+                        break;
+                    case DrawableTypes.TYPE_RIGHT_TRIANGLE:
+                        returnVector.add(new DrawableRightTriangle(a, b, fg, bg, thickness, isSquare));
+                        break;
+                    default:
+                        break;
+                }
             }
+        } catch(ArrayIndexOutOfBoundsException ignored) {}
+
+        return returnVector;
+    }
+
+    public void newFile() {
+        saved = true;
+        saveName = "";
+        shapesToDraw = new Vector<>();
+        selectedShapes = new Vector<>();
+        controlRectangles = new Vector<>();
+        paintUI.updateSelectedOption(-1);
+        cursor = new Cursor(Cursor.DEFAULT_CURSOR);
+        this.setCursor(cursor);
+        thickness = 1;
+        lineColor = Color.BLACK;
+        fillColor = null;
+        drawMode = DrawMode.DEFAULT;
+        this.setTitle(title);
+    }
+
+    public void openFile() {
+        newFile();
+
+        String name = "";
+        FileDialog fd_open = new FileDialog(this, words.get(8), FileDialog.LOAD);
+        fd_open.setDirectory(System.getProperty("home.dir"));
+        fd_open.setAlwaysOnTop(true);
+        fd_open.setVisible(true);
+
+        String dir_open = fd_open.getDirectory();
+        saveName = dir_open + fd_open.getFile();
+
+        while (!saveName.endsWith(".paint")) {
+            if(dir_open == null) {break;}
+            fd_open.setVisible(true);
+            dir_open = fd_open.getDirectory();
+            saveName = dir_open + fd_open.getFile();
+        }
+        fd_open.dispose();
+        if(dir_open == null) {saveName = "";}
+
+        if(!saveName.isEmpty()) {
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(saveName));
+                String dataLine;
+                while((dataLine = reader.readLine()) != null) {shapesToDraw.addAll(convertStringToShapes(dataLine));}
+                reader.close();
+                saved = true;
+                name = " - ".concat(saveName);
+            } catch (IOException ex) {
+                d = getDialogInformation(words.get(40));
+                d.setVisible(true);
+            }
+        } else {saveName = null;}
+
+        this.setTitle(title + name);
+    }
+
+    public void saveFile() {
+        String name = "";
+        if(saveName != null) {
+            shapesToDraw.addAll(selectedShapes);
+            selectedShapes = new Vector<>();
+            controlRectangles = new Vector<>();
+            try {
+                FileWriter writer = new FileWriter(saveName);
+                String[] dataLines = convertShapesToStringArray(shapesToDraw);
+                for(int i = 0; i < dataLines.length; i++) {
+                    writer.write(dataLines[i] + "\n");
+                }
+                writer.close();
+                saved = true;
+                saveName = saveName.replace("*", "");
+            } catch (IOException ex) {
+                d = getDialogInformation(words.get(41));
+                d.setVisible(true);
+            }
+        } else {
+            shapesToDraw.addAll(selectedShapes);
+            selectedShapes = new Vector<>();
+            controlRectangles = new Vector<>();
+
+            FileDialog fd = new FileDialog(this, words.get(10), FileDialog.SAVE);
+            fd.setDirectory(System.getProperty("home.dir"));
+            fd.setFile(words.get(42) + ".paint");
+            fd.setAlwaysOnTop(true);
+            fd.setVisible(true);
+
+            String dir = fd.getDirectory();
+            saveName = dir + fd.getFile();
+
+            while (!saveName.endsWith(".paint")) {
+                if(dir == null) {break;}
+                fd.setVisible(true);
+                dir = fd.getDirectory();
+                saveName = dir + fd.getFile();
+            }
+            fd.dispose();
+            if(dir == null) {saveName = "";}
+
+            if(!saveName.isEmpty()) {
+                try {
+                    FileWriter writer = new FileWriter(saveName);
+                    String[] dataLines = convertShapesToStringArray(shapesToDraw);
+                    for(int i = 0; i < dataLines.length; i++) {
+                        writer.write(dataLines[i] + "\n");
+                    }
+                    writer.close();
+                    saved = true;
+                    name = " - ".concat(saveName);
+                } catch (IOException ex) {
+                    d = getDialogInformation(words.get(41));
+                    d.setVisible(true);
+                    saveName = "";
+                }
+            }
+        }
+        this.setTitle(title + name);
+        saveName = null;
+    }
+
+    public Vector<String> loadLanguage(String lang) {
+        Vector<String> returnVector = new Vector<>();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("res/lang/" + lang));
+            String data;
+            while((data = br.readLine()) != null) {returnVector.add(data);}
+            br.close();
+        } catch(IOException e) {
+            fatalError = true;
+            if(lang.equals("de-at")) {
+                exitCode = 102;
+                d = getDialogErrorCode(102, false);
+            }
+            if(lang.equals("en-us")) {
+                exitCode = 103;
+                d = getDialogErrorCode(103, false);
+            }
+            else {
+                exitCode = 104;
+                d = getDialogErrorCode(104, false);
+            }
+            d.setVisible(true);
         }
 
         return returnVector;

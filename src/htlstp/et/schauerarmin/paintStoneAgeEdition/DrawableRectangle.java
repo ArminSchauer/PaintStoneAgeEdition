@@ -24,13 +24,33 @@ public class DrawableRectangle extends DrawableTypes {
                 (int)(this.getPointA().y * zoom) + startY,
         };
 
+        g.setStroke(new BasicStroke(this.getThickness()));
         Polygon rectangle = new Polygon(pointsX, pointsY, 4);
         this.drawPolygon(g, rectangle);
     }
 
-    public boolean cursorInRectangle(Point mousePoint, int startX, int startY) {
-        return (this.getPointA().x + startX <= mousePoint.x) && (this.getPointB().x + startX >= mousePoint.x)
-                && (this.getPointA().y + startY <= mousePoint.y) && (this.getPointB().y + startY >= mousePoint.y);
+    public void drawSelect(Graphics2D g, double zoom, int startX, int startY) {
+        int[] pointsX = {
+                (int)(this.getPointA().x * zoom) + startX,
+                (int)(this.getPointB().x * zoom) + startX,
+                (int)(this.getPointB().x * zoom) + startX,
+                (int)(this.getPointA().x * zoom) + startX,
+        };
+        int[] pointsY = {
+                (int)(this.getPointB().y * zoom) + startY,
+                (int)(this.getPointB().y * zoom) + startY,
+                (int)(this.getPointA().y * zoom) + startY,
+                (int)(this.getPointA().y * zoom) + startY,
+        };
+
+        g.setStroke(new BasicStroke(this.getThickness(), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND, 10, new float[]{10, 10}, 0));
+        Polygon rectangle = new Polygon(pointsX, pointsY, 4);
+        this.drawPolygon(g, rectangle);
+    }
+
+    public boolean cursorInRectangle(Point mousePoint, double zoom, int startX, int startY) {
+        return (this.getPointA().x + startX/zoom <= mousePoint.x) && (this.getPointB().x + startX/zoom >= mousePoint.x)
+                && (this.getPointA().y + startY/zoom <= mousePoint.y) && (this.getPointB().y + startY/zoom >= mousePoint.y);
     }
 
     @Override

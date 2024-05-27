@@ -1,6 +1,13 @@
-# A programm to paint with :-)
+# A program to paint with :-)
+
+Licence:<br>
+I don't care what you do with this programm although<br>
+it would be nice if I was credited.
+---
+Fonts and icons are from: https://fonts.google.com/
 
 ## Change Log:
+#### PreVersions
 - [v1.0-Alpha]:
     + first push
     + (+) simple UI
@@ -60,3 +67,16 @@
     + finished help menu
     + (+) cut, copy & paste
     + (+) open, save & save as
+
+#### Full Releases
+- [v2024:1a]:
+    + zoom bug fix
+    + (+) added shapes:
+        + pentagon
+        + hexagon
+    + (+) language change
+        + supported languages:
+            + German (AT)
+            + English (US)
+    + (+) dialog menus
+    + (+) app icon

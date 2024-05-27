@@ -7,42 +7,46 @@
     src: url("../fonts/PTSans-Bold.ttf");
 }
 
-#all-shortcuts {
+#all-error-codes {
     position: absolute;
     top: 120px;
     left: 85px;
     right: 85px;
 }
-#file-tab-shortcuts {
+#error-group-100 {
     position: relative;
     left: 35px;
     margin-bottom: 75px;
 }
-#edit-tab-shortcuts {
+#error-group-200 {
     position: relative;
     left: 35px;
     margin-bottom: 75px;
 }
-#select-tab-shortcuts {
+#error-group-300 {
     position: relative;
     left: 35px;
     margin-bottom: 75px;
 }
-#view-tab-shortcuts {
-    position: relative;
-    left: 35px;
-}
-.shortcut-container {
+.error-container {
     position: relative;
     left: 35px;
     margin-top: 20px;
     margin-bottom: 20px;
 }
-.shortcut {
+.error-code {
     font-family: PTSans-Regular, sans-serif;
 }
 .explanation {
     font-family: PTSans-Regular, sans-serif;
     position: absolute;
-    left: 250px;
+    left: 60px;
+}
+.explanation a {
+    color: #808080;
+    text-decoration: none;
+}
+.explanation a:hover {
+    color: #ff0000;
+    text-decoration: underline;
 }

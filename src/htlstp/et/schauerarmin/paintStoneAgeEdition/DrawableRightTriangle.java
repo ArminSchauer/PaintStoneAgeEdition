@@ -22,6 +22,7 @@ public class DrawableRightTriangle extends DrawableTypes {
                 (int)(this.getPointB().y * zoom) + startY
         };
 
+        g.setStroke(new BasicStroke(this.getThickness()));
         Polygon rightTriangle = new Polygon(pointsX, pointsY, 3);
         this.drawPolygon(g, rightTriangle);
     }
@@ -36,7 +37,7 @@ public class DrawableRightTriangle extends DrawableTypes {
         double[] aCP = {p.x - this.getPointA().x * zoom, p.y - this.getPointA().y * zoom};
         double[] AB = {this.getPointB().x * zoom - this.getPointA().x * zoom, 0};
         double[] AC = {0, this.getPointB().y * zoom - this.getPointA().y * zoom};
-        double[] BC = {this.getPointA().x - this.getPointB().x, this.getPointA().y - this.getPointB().y};
+        double[] BC = {(this.getPointA().x - this.getPointB().x)*zoom, (this.getPointA().y - this.getPointB().y)*zoom};
 
         boolean onLineA = Math.abs(aBP[1] * aCP[0] - aBP[0] * aCP[1]) < 10 * Math.sqrt(BC[0]*BC[0] + BC[1]*BC[1]);
         boolean onLineB = Math.abs(bAP[1] * bCP[0] - bAP[0] * bCP[1]) < 10 * Math.sqrt(AC[0]*AC[0] + AC[1]*AC[1]);
