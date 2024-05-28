@@ -1,46 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="PaintApp:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="16742e2a-3065-4d73-8fd4-69c40a49c9da" name="Changes" comment="Paint: Stone Age Edition [v1.5-Alpha]">
-      <change afterPath="$PROJECT_DIR$/res/fonts/PTSans-Italic.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/images/draw_type_hexagon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/images/draw_type_pentagon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/images/icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/lang/de-at" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/lang/en-us" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/settings" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/web/de-at/error_codes.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/web/de-at/help.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/web/en-us/error_codes.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/web/en-us/help.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/web/style.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/web/style_error_codes.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/web/style_help.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableHexagon.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawablePentagon.java" afterDir="false" />
+    <list default="true" id="16742e2a-3065-4d73-8fd4-69c40a49c9da" name="Changes" comment="Paint: Stone Age Edition [v2024:1b] (jar file fix)">
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/PaintApp_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PaintApp.iml" beforeDir="false" afterPath="$PROJECT_DIR$/PaintApp.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.MD" beforeDir="false" afterPath="$PROJECT_DIR$/README.MD" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/draw_type_isosceles_triangle.png" beforeDir="false" afterPath="$PROJECT_DIR$/res/images/draw_type_isosceles_triangle.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/draw_type_line.png" beforeDir="false" afterPath="$PROJECT_DIR$/res/images/draw_type_line.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/draw_type_oval.png" beforeDir="false" afterPath="$PROJECT_DIR$/res/images/draw_type_oval.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/draw_type_rectangle.png" beforeDir="false" afterPath="$PROJECT_DIR$/res/images/draw_type_rectangle.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/draw_type_right_triangle.png" beforeDir="false" afterPath="$PROJECT_DIR$/res/images/draw_type_right_triangle.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/tool_select.png" beforeDir="false" afterPath="$PROJECT_DIR$/res/images/tool_select.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/web/de-at/shortcuts.html" beforeDir="false" afterPath="$PROJECT_DIR$/res/web/de-at/shortcuts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/web/en-us/shortcuts.html" beforeDir="false" afterPath="$PROJECT_DIR$/res/web/en-us/shortcuts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/web/style_shortcuts.css" beforeDir="false" afterPath="$PROJECT_DIR$/res/web/style_shortcuts.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/lang/de-at" beforeDir="false" afterPath="$PROJECT_DIR$/res/lang/de-at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/lang/en-us" beforeDir="false" afterPath="$PROJECT_DIR$/res/lang/en-us" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/web/de-at/error_codes.html" beforeDir="false" afterPath="$PROJECT_DIR$/res/web/de-at/error_codes.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/web/en-us/error_codes.html" beforeDir="false" afterPath="$PROJECT_DIR$/res/web/en-us/error_codes.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/Drawable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/Drawable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableHexagon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableHexagon.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableIsoscelesTriangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableIsoscelesTriangle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableOval.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableOval.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawablePentagon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawablePentagon.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRectangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRectangle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRightTriangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRightTriangle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableTypes.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUIOptionBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUIOptionBox.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintStoneAgeEdition.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintStoneAgeEdition.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -78,25 +67,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/FI/programmieren/PaintApp/res/fonts&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.web.browsers&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/FI/programmieren/PaintApp/res/fonts",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Artifacts",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.web.browsers",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\FI\programmieren\PaintApp\res\fonts" />
@@ -190,6 +182,8 @@
       <workItem from="1716812466588" duration="1061000" />
       <workItem from="1716814202601" duration="4459000" />
       <workItem from="1716819032567" duration="19840000" />
+      <workItem from="1716852577559" duration="255000" />
+      <workItem from="1716852859744" duration="8043000" />
     </task>
     <task id="LOCAL-00001" summary="Paint: Stone Age Edition [v1.0-Alpha]">
       <option name="closed" value="true" />

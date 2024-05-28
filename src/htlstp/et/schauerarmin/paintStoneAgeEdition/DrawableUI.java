@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
 
 public class DrawableUI implements Drawable {
@@ -48,21 +49,29 @@ public class DrawableUI implements Drawable {
             g.drawString("FG", frameWidth - 115, startY + 255);
             g.drawString("BG", frameWidth - 55, startY + 255);
 
-            Image i = ImageIO.read(new File("res/images/tool_select.png"));
+
+            Image i = ImageIO.read(new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/tool_select.png"));
             g.drawImage(i, frameWidth - 116, 25 + startY, null);
-            i = ImageIO.read(new File("res/images/draw_type_line.png"));
+
+            i = ImageIO.read(new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_line.png"));
             g.drawImage(i, frameWidth - 116, 75 + startY, null);
-            i = ImageIO.read(new File("res/images/draw_type_rectangle.png"));
+
+            i = ImageIO.read(new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_rectangle.png"));
             g.drawImage(i, frameWidth - 87, 75 + startY, null);
-            i = ImageIO.read(new File("res/images/draw_type_oval.png"));
+
+            i = ImageIO.read(new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_oval.png"));
             g.drawImage(i, frameWidth - 58, 75 + startY, null);
-            i = ImageIO.read(new File("res/images/draw_type_isosceles_triangle.png"));
+
+            i = ImageIO.read(new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_isosceles_triangle.png"));
             g.drawImage(i, frameWidth - 29, 75 + startY, null);
-            i = ImageIO.read(new File("res/images/draw_type_right_triangle.png"));
+
+            i = ImageIO.read(new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_right_triangle.png"));
             g.drawImage(i, frameWidth - 116, 104 + startY, null);
-            i = ImageIO.read(new File("res/images/draw_type_pentagon.png"));
+
+            i = ImageIO.read(new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_pentagon.png"));
             g.drawImage(i, frameWidth - 87, 104 + startY, null);
-            i = ImageIO.read(new File("res/images/draw_type_hexagon.png"));
+
+            i = ImageIO.read(new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_hexagon.png"));
             g.drawImage(i, frameWidth - 58, 104 + startY, null);
 
 

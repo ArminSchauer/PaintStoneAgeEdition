@@ -1,7 +1,6 @@
 package htlstp.et.schauerarmin.paintStoneAgeEdition;
 
 import java.awt.*;
-import java.io.IOException;
 
 public abstract class DrawableTypes implements Drawable {
 
@@ -42,7 +41,7 @@ public abstract class DrawableTypes implements Drawable {
         g.drawPolygon(p);
     }
 
-    public void drawSelected(Graphics2D g, double zoom, int startX, int startY) throws IOException {
+    public void drawSelected(Graphics2D g, double zoom, int startX, int startY) throws Exception {
         this.draw(g, zoom, startX, startY);
         new DrawableRectangle(this.getPointA(), this.getPointB(), Color.GRAY, null, 2, this.getIsSquare()).drawSelect(g, zoom, startX, startY);
     }

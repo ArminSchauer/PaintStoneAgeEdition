@@ -3,7 +3,6 @@ package htlstp.et.schauerarmin.paintStoneAgeEdition;
 import java.awt.*;
 
 public class DrawableIsoscelesTriangle extends DrawableTypes {
-
     public DrawableIsoscelesTriangle(Point pointA, Point pointB, Color lineColor,
                                      Color fillColor, int thickness, boolean isSquare) {
         super(pointA, pointB, TYPE_ISOSCELES_TRIANGLE, lineColor, fillColor, thickness, isSquare);

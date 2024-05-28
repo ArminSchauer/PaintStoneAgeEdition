@@ -1,7 +1,6 @@
 package htlstp.et.schauerarmin.paintStoneAgeEdition;
 
 import java.awt.*;
-import java.io.IOException;
 
 public class DrawableHexagon extends DrawableTypes {
     public DrawableHexagon(Point pointA, Point pointB, Color lineColor, Color fillColor, int thickness, boolean isSquare) {
@@ -9,7 +8,7 @@ public class DrawableHexagon extends DrawableTypes {
     }
 
     @Override
-    public void draw(Graphics2D g, double zoom, int startX, int startY) throws IOException {
+    public void draw(Graphics2D g, double zoom, int startX, int startY) {
         int width = this.getPointB().x - this.getPointA().x;
         int height = this.getPointB().y - this.getPointA().y;
         int[] pointsX = {

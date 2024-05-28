@@ -3,7 +3,6 @@ package htlstp.et.schauerarmin.paintStoneAgeEdition;
 import java.awt.*;
 
 public class DrawableUIOptionBox extends DrawableTypes {
-
     private final int boxWidth;
     private final int boxHeight;
     private final int boxType;

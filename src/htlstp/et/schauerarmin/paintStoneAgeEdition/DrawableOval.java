@@ -3,7 +3,6 @@ package htlstp.et.schauerarmin.paintStoneAgeEdition;
 import java.awt.*;
 
 public class DrawableOval extends DrawableTypes {
-
     public DrawableOval(Point pointA, Point pointB, Color lineColor, Color fillColor, int thickness, boolean isSquare) {
         super(pointA, pointB, TYPE_OVAL, lineColor, fillColor, thickness, isSquare);
     }

@@ -3,7 +3,6 @@ package htlstp.et.schauerarmin.paintStoneAgeEdition;
 import java.awt.*;
 
 public class DrawableRectangle extends DrawableTypes {
-
     public DrawableRectangle(Point pointA, Point pointB, Color lineColor,
                              Color fillColor, int thickness, boolean isSquare) {
         super(pointA, pointB, TYPE_RECTANGLE, lineColor, fillColor, thickness, isSquare);

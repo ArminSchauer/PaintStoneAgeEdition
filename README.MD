@@ -80,3 +80,8 @@ Fonts and icons are from: https://fonts.google.com/
             + English (US)
     + (+) dialog menus
     + (+) app icon
+
+
+- [v2024:1b]:
+    + jar bug fix
+    + error codes change and update

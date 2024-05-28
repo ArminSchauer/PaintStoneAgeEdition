@@ -3,7 +3,6 @@ package htlstp.et.schauerarmin.paintStoneAgeEdition;
 import java.awt.*;
 
 public class DrawableRightTriangle extends DrawableTypes {
-
     public DrawableRightTriangle(Point pointA, Point pointB, Color lineColor,
                                  Color fillColor, int thickness, boolean isSquare) {
         super(pointA, pointB, TYPE_RIGHT_TRIANGLE, lineColor, fillColor, thickness, isSquare);
