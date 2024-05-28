@@ -1,10 +1,16 @@
 # A program to paint with :-)
 
+### (Windows only!)
+
+---
+
 Licence:<br>
 I don't care what you do with this programm although<br>
 it would be nice if I was credited.
 ---
 Fonts and icons are from: https://fonts.google.com/
+
+---
 
 ## Change Log:
 #### PreVersions
@@ -85,3 +91,8 @@ Fonts and icons are from: https://fonts.google.com/
 - [v2024:1b]:
     + jar bug fix
     + error codes change and update
+
+
+- [v2024:1c]:
+    + added installer
+

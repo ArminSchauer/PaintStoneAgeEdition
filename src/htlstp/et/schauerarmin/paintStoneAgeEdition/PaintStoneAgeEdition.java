@@ -13,8 +13,9 @@ import java.util.Vector;
 
 public class PaintStoneAgeEdition extends PaintFrame {
 
-    private static final String title = "Paint: Stone Age Edition [v2024:1b]";
+    private static final String title = "Paint: Stone Age Edition [v2024:1c]";
     private static final String settingsPath = "/settings";
+    public static String installationPath = System.getProperty("user.home") + "\\PaintStoneAgeEdition";
     private double zoom;
     private int startX; // X offset of the left side
     private int startY; // Y offset of the title bar
@@ -49,7 +50,18 @@ public class PaintStoneAgeEdition extends PaintFrame {
 
         lang = "";
         int numOfWords = 0;
-        if(!new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/settings").exists()) {
+        try {
+            Process p = Runtime.getRuntime().exec("reg query HKEY_CURRENT_USER\\Environment /v PaintSAE.installationPath\n");
+            String str = "";
+            byte[] bytes = p.getInputStream().readAllBytes();
+            for(int i = 76; i < bytes.length; i++) {
+                str = str.concat(Character.toString((char) bytes[i]));
+            }
+            installationPath = str.strip();
+        } catch (IOException ex) {
+
+        }
+        if(!new File(installationPath + "/settings").exists()) {
             try {
                 InputStream inputStream = PaintStoneAgeEdition.class.getResourceAsStream(settingsPath);
                 BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -63,141 +75,9 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 d = getDialogErrorCode(100, false);
                 d.setVisible(true);
             }
-
-            try {
-                new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/saves").mkdirs();
-                new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/fonts").mkdirs();
-                new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/images").mkdirs();
-                new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/lang").mkdirs();
-                new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/de-at").mkdirs();
-                new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/en-us").mkdirs();
-                FileWriter fw = new FileWriter(System.getProperty("user.home") + "/PaintStoneAgeEdition/settings");
-                fw.write("!PAINT_APP_SETTINGS\nLANG=en-us\nNUM_OF_WORDS=44");
-                fw.close();
-
-                InputStream inStream = PaintStoneAgeEdition.class.getResourceAsStream("/fonts/PTSans-Bold.ttf");
-                OutputStream outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/fonts/PTSans-Bold.ttf");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/fonts/PTSans-Italic.ttf");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/fonts/PTSans-Italic.ttf");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/fonts/PTSans-Regular.ttf");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/fonts/PTSans-Regular.ttf");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/images/draw_type_hexagon.png");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_hexagon.png");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/images/draw_type_isosceles_triangle.png");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_isosceles_triangle.png");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/images/draw_type_line.png");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_line.png");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/images/draw_type_oval.png");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_oval.png");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/images/draw_type_pentagon.png");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_pentagon.png");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/images/draw_type_rectangle.png");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_rectangle.png");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/images/draw_type_right_triangle.png");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/draw_type_right_triangle.png");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/images/icon.png");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/icon.png");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/images/tool_select.png");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/tool_select.png");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/lang/de-at");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/lang/de-at");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/lang/en-us");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/lang/en-us");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/web/style.css");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/style.css");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/web/style_error_codes.css");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/style_error_codes.css");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/web/style_help.css");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/style_help.css");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/web/style_shortcuts.css");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/style_shortcuts.css");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/web/de-at/error_codes.html");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/de-at/error_codes.html");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/web/de-at/help.html");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/de-at/help.html");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/web/de-at/shortcuts.html");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/de-at/shortcuts.html");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/web/en-us/error_codes.html");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/en-us/error_codes.html");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/web/en-us/help.html");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/en-us/help.html");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-
-                inStream = PaintStoneAgeEdition.class.getResourceAsStream("/web/en-us/shortcuts.html");
-                outStream = new FileOutputStream(System.getProperty("user.home") + "/PaintStoneAgeEdition/web/en-us/shortcuts.html");
-                outStream.write(inStream.readAllBytes());
-                outStream.close();
-            } catch (IOException ignored) {}
         } else {
             try {
-                BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.home") + "/PaintStoneAgeEdition/settings"));
+                BufferedReader br = new BufferedReader(new FileReader(installationPath + "/settings"));
                 br.readLine();
                 lang = br.readLine().split("=")[1];
                 numOfWords = Integer.parseInt(br.readLine().split("=")[1]);
@@ -341,7 +221,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
         d = getDialog(100);
 
         try {
-            this.setIconImage(ImageIO.read(new File(System.getProperty("user.home") + "/PaintStoneAgeEdition/images/icon.png")));
+            this.setIconImage(ImageIO.read(new File(installationPath + "/images/icon.png")));
         } catch (IOException ignored) {}
 
         this.setCursor(cursor);
@@ -1309,7 +1189,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 break;
             case "DE-AT":
                 try {
-                    FileWriter writer = new FileWriter(System.getProperty("user.home") + "/PaintStoneAgeEdition/settings");
+                    FileWriter writer = new FileWriter(installationPath + "/settings");
                     writer.write("!PAINT_APP_SETTINGS\nLANG=de-at\nNUM_OF_WORDS=44");
                     writer.close();
                 } catch (Exception ex) {
@@ -1322,7 +1202,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 break;
             case "EN-US":
                 try {
-                    FileWriter writer =  new FileWriter(System.getProperty("user.home") + "/PaintStoneAgeEdition/settings");
+                    FileWriter writer =  new FileWriter(installationPath + "/settings");
                     writer.write("!PAINT_APP_SETTINGS\nLANG=en-us\nNUM_OF_WORDS=44");
                     writer.close();
                 } catch (Exception ex) {
@@ -1408,7 +1288,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 break;
             case "HELP":
                 try {
-                    String path = new java.io.File(System.getProperty("user.home") + "\\PaintStoneAgeEdition\\web\\" + lang + "\\help.html").getCanonicalPath();
+                    String path = new java.io.File(installationPath + "\\web\\" + lang + "\\help.html").getCanonicalPath();
                     System.out.println(path);
                     Desktop.getDesktop().browse(new URL("file:///" + path.replaceAll(" ", "%20")).toURI());}
                 catch (Exception ex) {
@@ -1418,7 +1298,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 break;
             case "ERROR_CODES":
                 try {
-                    String path = new java.io.File(System.getProperty("user.home") + "\\PaintStoneAgeEdition\\web\\" + lang + "\\error_codes.html").getCanonicalPath();
+                    String path = new java.io.File(installationPath + "\\web\\" + lang + "\\error_codes.html").getCanonicalPath();
                     Desktop.getDesktop().browse(new URL("file:///" + path.replaceAll(" ", "%20")).toURI());}
                 catch (Exception ex) {
                     d = getDialogErrorCode(201, true);
@@ -1427,7 +1307,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
                 break;
             case "SHORTCUTS":
                 try {
-                    String path = new java.io.File(System.getProperty("user.home") + "\\PaintStoneAgeEdition\\web\\" + lang + "\\shortcuts.html").getCanonicalPath();
+                    String path = new java.io.File(installationPath + "\\web\\" + lang + "\\shortcuts.html").getCanonicalPath();
                     Desktop.getDesktop().browse(new URL("file:///" + path.replaceAll(" ", "%20")).toURI());
                     }
                 catch (Exception ex) {
@@ -1754,7 +1634,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
 
         String name = "";
         FileDialog fd = new FileDialog(this, words.get(8), FileDialog.LOAD);
-        fd.setDirectory(System.getProperty("user.home") + "\\PaintStoneAgeEdition\\saves");
+        fd.setDirectory(installationPath + "\\saves");
         fd.setAlwaysOnTop(true);
         fd.setVisible(true);
 
@@ -1812,7 +1692,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
             controlRectangles = new Vector<>();
 
             FileDialog fd = new FileDialog(this, words.get(10), FileDialog.SAVE);
-            fd.setDirectory(System.getProperty("user.home") + "\\PaintStoneAgeEdition\\saves");
+            fd.setDirectory(installationPath + "\\saves");
             fd.setFile(words.get(42) + ".paint");
             fd.setAlwaysOnTop(true);
             fd.setVisible(true);
@@ -1854,7 +1734,7 @@ public class PaintStoneAgeEdition extends PaintFrame {
         Vector<String> returnVector = new Vector<>();
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.home") + "/PaintStoneAgeEdition/lang/" + lang));
+            BufferedReader br = new BufferedReader(new FileReader(installationPath + "/lang/" + lang));
             String data;
             while((data = br.readLine()) != null) {returnVector.add(data);}
             br.close();

@@ -1,9 +1,9 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="PaintApp:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/PaintApp_jar</output-path>
+    <output-path>$PROJECT_DIR$/res</output-path>
     <root id="archive" name="PaintStoneAgeEdition.jar">
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/PaintMain/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="PaintApp" />
     </root>

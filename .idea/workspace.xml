@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="PaintApp:jar" />
+      <artifact name="PaintInstaller:jar" />
     </artifacts-to-build>
   </component>
   <component name="AutoImportSettings">
@@ -10,26 +10,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="16742e2a-3065-4d73-8fd4-69c40a49c9da" name="Changes" comment="Paint: Stone Age Edition [v2024:1b] (jar file fix)">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/PaintApp_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/PaintInstaller_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaintInstaller/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/res/PaintStoneAgeEdition.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/res/images/icon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/installPaint/PaintInstallerMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/PaintApp_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/PaintApp_jar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaintApp.iml" beforeDir="false" afterPath="$PROJECT_DIR$/PaintApp.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/PaintMain/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.MD" beforeDir="false" afterPath="$PROJECT_DIR$/README.MD" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/lang/de-at" beforeDir="false" afterPath="$PROJECT_DIR$/res/lang/de-at" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/lang/en-us" beforeDir="false" afterPath="$PROJECT_DIR$/res/lang/en-us" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/web/de-at/error_codes.html" beforeDir="false" afterPath="$PROJECT_DIR$/res/web/de-at/error_codes.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/web/en-us/error_codes.html" beforeDir="false" afterPath="$PROJECT_DIR$/res/web/en-us/error_codes.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/Drawable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/Drawable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableHexagon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableHexagon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableIsoscelesTriangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableIsoscelesTriangle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableOval.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableOval.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawablePentagon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawablePentagon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRectangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRectangle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRightTriangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableRightTriangle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableTypes.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUIOptionBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/DrawableUIOptionBox.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintStoneAgeEdition.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/htlstp/et/schauerarmin/paintStoneAgeEdition/PaintStoneAgeEdition.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -76,7 +66,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/FI/programmieren/PaintApp/res/fonts",
+    "last_opened_file_path": "C:/FI/programmieren/PaintApp/res",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -100,7 +90,20 @@
       <recent name="C:\FI\programmieren\PaintApp\res\help(html)" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.PaintInstallerMain">
+    <configuration name="PaintInstallerMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="htlstp.et.schauerarmin.installPaint.PaintInstallerMain" />
+      <module name="PaintApp" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="htlstp.et.schauerarmin.installPaint.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="PaintStoneAgeEdition" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="htlstp.et.schauerarmin.paintStoneAgeEdition.PaintStoneAgeEdition" />
       <module name="PaintApp" />
@@ -116,6 +119,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.PaintInstallerMain" />
         <item itemvalue="Application.PaintStoneAgeEdition" />
       </list>
     </recent_temporary>
@@ -183,7 +187,8 @@
       <workItem from="1716814202601" duration="4459000" />
       <workItem from="1716819032567" duration="19840000" />
       <workItem from="1716852577559" duration="255000" />
-      <workItem from="1716852859744" duration="8043000" />
+      <workItem from="1716852859744" duration="8465000" />
+      <workItem from="1716875778912" duration="28373000" />
     </task>
     <task id="LOCAL-00001" summary="Paint: Stone Age Edition [v1.0-Alpha]">
       <option name="closed" value="true" />
@@ -249,7 +254,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715991162142</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Paint: Stone Age Edition [v2024:1b] (jar file fix)">
+      <option name="closed" value="true" />
+      <created>1716862292552</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1716862292552</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -276,6 +289,7 @@
     <MESSAGE value="Paint: Stone Age Edition [v1.3-Beta]" />
     <MESSAGE value="Paint: Stone Age Edition [v1.4-Alpha]" />
     <MESSAGE value="Paint: Stone Age Edition [v1.5-Alpha]" />
-    <option name="LAST_COMMIT_MESSAGE" value="Paint: Stone Age Edition [v1.5-Alpha]" />
+    <MESSAGE value="Paint: Stone Age Edition [v2024:1b] (jar file fix)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Paint: Stone Age Edition [v2024:1b] (jar file fix)" />
   </component>
 </project>
